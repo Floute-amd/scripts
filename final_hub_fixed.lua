@@ -31423,7 +31423,10 @@ Join discord for more information!
         end)
     end)
 
+    print("[DEBUG] Main tab completed successfully")
+
     -- ==================== BALL TAB ====================
+    print("[DEBUG] Starting Ball tab creation")
     BallTab:AddSection("Ball Hacks")
 
     local fbHitbox       = nil
