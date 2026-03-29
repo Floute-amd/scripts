@@ -31276,26 +31276,26 @@ Join discord for more information!
     local ok, Flows = pcall(function()
         return require(ReplicatedStorage.Shared.Flows)
     end)
-    if not ok or not Flows then
-        UI.Error("Flow Changer", "Failed to load Flows data.")
-        return
+    
+    if ok and Flows then
+        local flowOpts = {}
+        for name in pairs(Flows) do table.insert(flowOpts, name) end
+        table.sort(flowOpts)
+
+        MainTab:AddDropdown("FLOW CHANGER", {
+            Options = flowOpts, Default = "Default", Flag = "FlowChangerFlag"
+        }, function(opt)
+            local stats = LP:FindFirstChild("PlayerStats")
+            if stats then
+                stats.Flow.Value = opt
+                UI.Success("Flow Changer", "Flow changed to: " .. opt)
+            else
+                UI.Error("Flow Changer", "PlayerStats not found!")
+            end
+        end)
+    else
+        UI.Warning("Flow Changer", "Flow system not available in this game.")
     end
-
-    local flowOpts = {}
-    for name in pairs(Flows) do table.insert(flowOpts, name) end
-    table.sort(flowOpts)
-
-    MainTab:AddDropdown("FLOW CHANGER", {
-        Options = flowOpts, Default = "Default", Flag = "FlowChangerFlag"
-    }, function(opt)
-        local stats = LP:FindFirstChild("PlayerStats")
-        if stats then
-            stats.Flow.Value = opt
-            UI.Success("Flow Changer", "Flow changed to: " .. opt)
-        else
-            UI.Error("Flow Changer", "PlayerStats not found!")
-        end
-    end)
 
     -- ===== DRIBBLE =====
     MainTab:AddSection("Dribble Controls")
