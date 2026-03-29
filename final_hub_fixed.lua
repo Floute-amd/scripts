@@ -31289,29 +31289,35 @@ Join discord for more information!
         end
     end)
 
-    local ok, Flows = pcall(function()
-        return require(ReplicatedStorage.Shared.Flows)
-    end)
-    
-    if ok and Flows then
-        local flowOpts = {}
-        for name in pairs(Flows) do table.insert(flowOpts, name) end
-        table.sort(flowOpts)
-
-        MainTab:AddDropdown("FLOW CHANGER", {
-            Options = flowOpts, Default = "Default", Flag = "FlowChangerFlag"
-        }, function(opt)
-            local stats = LP:FindFirstChild("PlayerStats")
-            if stats then
-                stats.Flow.Value = opt
-                UI.Success("Flow Changer", "Flow changed to: " .. opt)
-            else
-                UI.Error("Flow Changer", "PlayerStats not found!")
-            end
+    pcall(function()
+        local ok, Flows = pcall(function()
+            return require(ReplicatedStorage.Shared.Flows)
         end)
-    else
-        UI.Warning("Flow Changer", "Flow system not available in this game.")
-    end
+        
+        if ok and Flows and type(Flows) == "table" then
+            local flowOpts = {}
+            for name in pairs(Flows) do 
+                if type(name) == "string" then
+                    table.insert(flowOpts, name)
+                end
+            end
+            table.sort(flowOpts)
+
+            if #flowOpts > 0 then
+                MainTab:AddDropdown("FLOW CHANGER", {
+                    Options = flowOpts, Default = "Default", Flag = "FlowChangerFlag"
+                }, function(opt)
+                    local stats = LP:FindFirstChild("PlayerStats")
+                    if stats and stats:FindFirstChild("Flow") then
+                        stats.Flow.Value = opt
+                        UI.Success("Flow Changer", "Flow changed to: " .. opt)
+                    else
+                        UI.Error("Flow Changer", "PlayerStats not found!")
+                    end
+                end)
+            end
+        end
+    end)
 
     -- ===== DRIBBLE =====
     MainTab:AddSection("Dribble Controls")
