@@ -31274,8 +31274,137 @@ Join discord for more information!
         end)
     end)
 
+    -- ===== FLOW / FLOWS =====
+    MainTab:AddSection("Only Works on some Flows")
+
+    MainTab:AddToggle("Get Flow Buff | Inf Flow", {
+        Default = false, Flag = "ToggleFlowFlag"
+    }, function(v)
+        local stats = LP:FindFirstChild("PlayerStats")
+        if stats and stats:FindFirstChild("InFlow") then
+            stats.InFlow.Value = v
+            UI.Success("Flow Buff", "Flow Buff " .. (v and "activated!" or "deactivated!"))
+        else
+            UI.Error("Flow Buff", "PlayerStats not found!")
+        end
+    end)
+
+    local ok, Flows = pcall(function()
+        return require(ReplicatedStorage.Shared.Flows)
+    end)
+    
+    if ok and Flows then
+        local flowOpts = {}
+        for name in pairs(Flows) do table.insert(flowOpts, name) end
+        table.sort(flowOpts)
+
+        MainTab:AddDropdown("FLOW CHANGER", {
+            Options = flowOpts, Default = "Default", Flag = "FlowChangerFlag"
+        }, function(opt)
+            local stats = LP:FindFirstChild("PlayerStats")
+            if stats then
+                stats.Flow.Value = opt
+                UI.Success("Flow Changer", "Flow changed to: " .. opt)
+            else
+                UI.Error("Flow Changer", "PlayerStats not found!")
+            end
+        end)
+    else
+        UI.Warning("Flow Changer", "Flow system not available in this game.")
+    end
+
+    -- ===== DRIBBLE =====
+    MainTab:AddSection("Dribble Controls")
+
+    local dribbleLoaded = false
+    MainTab:AddToggle("Auto Dribble", {
+        Default = false, Flag = "AutoDribbleToggle"
+    }, function(v)
+        if v then
+            if not dribbleLoaded then
+                loadstring(game:HttpGet("https://raw.githubusercontent.com/Floute-amd/scripts/refs/heads/main/autodribble.lua", true))()
+                dribbleLoaded = true
+            end
+            getgenv().AutoDribbleSettings.Enabled = true
+            UI.Success("Auto Dribble", "Activated!")
+        else
+            getgenv().AutoDribbleSettings.Enabled = false
+            UI.Warning("Auto Dribble", "Deactivated!")
+        end
+    end)
+
+    MainTab:AddInput("Dribble Range", {
+        Default = "22", Placeholder = "Enter Dribble Range", Flag = "DribbleRangeInput"
+    }, function(txt)
+        getgenv().AutoDribbleSettings.range = tonumber(txt) or 22
+        UI.Success("Dribble Range", "Range changed to: " .. getgenv().AutoDribbleSettings.range)
+    end)
+
+    -- ===== POWER (MOBILE) =====
+    MainTab:AddSection("Power Settings | Mobile")
+
+    local mobPower   = 180
+    local mobOn      = false
+    local mobConn    = nil
+    local shootBtn   = nil
+    
+    pcall(function()
+        shootBtn = LP.PlayerGui.Mobile.Ball.Shoot
+    end)
+
+    MainTab:AddSlider("Power | Mobile", {
+        Min = 0, Max = 1000, Default = 180, Flag = "MobilePowerSlider"
+    }, function(v) mobPower = v end)
+
+    MainTab:AddToggle("Add Power | Mobile", {
+        Default = false, Flag = "MobilePowerToggle"
+    }, function(v)
+        mobOn = v
+        if mobConn then mobConn:Disconnect(); mobConn = nil end
+        if mobOn and shootBtn then
+            mobConn = shootBtn.MouseButton1Click:Connect(function()
+                BallRE.Shoot:FireServer(mobPower, nil, Vector3.new(1, 0, 0))
+            end)
+        elseif mobOn and not shootBtn then
+            UI.Error("Mobile Power", "Mobile GUI not found!")
+        end
+    end)
+
+    -- ===== POWER (PC) =====
+    MainTab:AddSection("Power Settings | PC")
+
+    local pcPower  = 180
+    local pcOn     = false
+    local pcConn   = nil
+    local pcBind   = Enum.KeyCode.E
+
+    MainTab:AddSlider("Power | PC", {
+        Min = 0, Max = 1000, Default = 180, Flag = "PCPowerSlider"
+    }, function(v) pcPower = v end)
+
+    MainTab:AddInput("Keybind | PC", {
+        PlaceholderText = "Enter key (ex: E, Q, R)", Flag = "PCKeybindInput"
+    }, function(txt)
+        local ok2, key = pcall(function() return Enum.KeyCode[txt:upper()] end)
+        if ok2 and key then pcBind = key
+        else warn("Invalid key:", txt) end
+    end)
+
+    MainTab:AddToggle("Add Power | PC", {
+        Default = false, Flag = "PCToggleShoot"
+    }, function(v)
+        pcOn = v
+        if pcConn then pcConn:Disconnect(); pcConn = nil end
+        if pcOn then
+            pcConn = UIS.InputBegan:Connect(function(input, gp)
+                if not gp and input.KeyCode == pcBind then
+                    BallRE.Shoot:FireServer(pcPower, nil, Vector3.new(1, 0, 0))
+                end
+            end)
+        end
+    end)
+
     -- ==================== BALL TAB ====================
-    print("[DEBUG] Starting Ball tab creation")
     BallTab:AddSection("Ball Hacks")
 
     local fbHitbox       = nil
