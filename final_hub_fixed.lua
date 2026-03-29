@@ -31326,24 +31326,35 @@ Join discord for more information!
     MainTab:AddToggle("Auto Dribble", {
         Default = false, Flag = "AutoDribbleToggle"
     }, function(v)
-        if v then
-            if not dribbleLoaded then
-                loadstring(game:HttpGet("https://raw.githubusercontent.com/Floute-amd/scripts/refs/heads/main/autodribble.lua", true))()
-                dribbleLoaded = true
+        pcall(function()
+            if v then
+                if not dribbleLoaded then
+                    loadstring(game:HttpGet("https://raw.githubusercontent.com/Floute-amd/scripts/refs/heads/main/autodribble.lua", true))()
+                    dribbleLoaded = true
+                end
+                if getgenv().AutoDribbleSettings then
+                    getgenv().AutoDribbleSettings.Enabled = true
+                end
+                UI.Success("Auto Dribble", "Activated!")
+            else
+                if getgenv().AutoDribbleSettings then
+                    getgenv().AutoDribbleSettings.Enabled = false
+                end
+                UI.Warning("Auto Dribble", "Deactivated!")
             end
-            getgenv().AutoDribbleSettings.Enabled = true
-            UI.Success("Auto Dribble", "Activated!")
-        else
-            getgenv().AutoDribbleSettings.Enabled = false
-            UI.Warning("Auto Dribble", "Deactivated!")
-        end
+        end)
     end)
 
     MainTab:AddInput("Dribble Range", {
         Default = "22", Placeholder = "Enter Dribble Range", Flag = "DribbleRangeInput"
     }, function(txt)
-        getgenv().AutoDribbleSettings.range = tonumber(txt) or 22
-        UI.Success("Dribble Range", "Range changed to: " .. getgenv().AutoDribbleSettings.range)
+        pcall(function()
+            if not getgenv().AutoDribbleSettings then
+                getgenv().AutoDribbleSettings = { range = 22 }
+            end
+            getgenv().AutoDribbleSettings.range = tonumber(txt) or 22
+            UI.Success("Dribble Range", "Range changed to: " .. getgenv().AutoDribbleSettings.range)
+        end)
     end)
 
     -- ===== POWER (MOBILE) =====
@@ -31399,15 +31410,17 @@ Join discord for more information!
     MainTab:AddToggle("Add Power | PC", {
         Default = false, Flag = "PCToggleShoot"
     }, function(v)
-        pcOn = v
-        if pcConn then pcConn:Disconnect(); pcConn = nil end
-        if pcOn then
-            pcConn = UIS.InputBegan:Connect(function(input, gp)
-                if not gp and input.KeyCode == pcBind then
-                    BallRE.Shoot:FireServer(pcPower, nil, Vector3.new(1, 0, 0))
-                end
-            end)
-        end
+        pcall(function()
+            pcOn = v
+            if pcConn then pcConn:Disconnect(); pcConn = nil end
+            if pcOn then
+                pcConn = UIS.InputBegan:Connect(function(input, gp)
+                    if not gp and input.KeyCode == pcBind then
+                        BallRE.Shoot:FireServer(pcPower, nil, Vector3.new(1, 0, 0))
+                    end
+                end)
+            end
+        end)
     end)
 
     -- ==================== BALL TAB ====================
