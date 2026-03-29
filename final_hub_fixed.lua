@@ -31306,7 +31306,7 @@ Join discord for more information!
     }, function(v)
         if v then
             if not dribbleLoaded then
-                loadstring(game:HttpGet("https://raw.githubusercontent.com/XZuuyaX/Auto-Dribble/refs/heads/main/Main.lua", true))()
+                loadstring(game:HttpGet("https://raw.githubusercontent.com/Floute-amd/scripts/refs/heads/main/autodribble.lua", true))()
                 dribbleLoaded = true
             end
             getgenv().AutoDribbleSettings.Enabled = true
