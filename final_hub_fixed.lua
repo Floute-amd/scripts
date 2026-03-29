@@ -31133,8 +31133,12 @@ Join discord for more information!
     -- AUTO AWAKENING
     local awakenOn   = false
     local awakenConn = nil
-    local AwakenRE   = ReplicatedStorage:WaitForChild("Packages"):WaitForChild("Knit")
-        :WaitForChild("Services"):WaitForChild("AwakeningService"):WaitForChild("RE"):WaitForChild("StartAwakening")
+    local AwakenRE   = nil
+    
+    pcall(function()
+        AwakenRE = ReplicatedStorage:WaitForChild("Packages", 2):WaitForChild("Knit", 2)
+            :WaitForChild("Services", 2):WaitForChild("AwakeningService", 2):WaitForChild("RE", 2):WaitForChild("StartAwakening", 2)
+    end)
 
     MainTab:AddToggle("Auto Awakening", {
         Default = false, Flag = "AutoAwakening"
@@ -31142,6 +31146,10 @@ Join discord for more information!
         awakenOn = v
         if awakenConn then awakenConn:Disconnect(); awakenConn = nil end
         if v then
+            if not AwakenRE then
+                UI.Error("Auto Awakening", "Awakening system not found!")
+                return
+            end
             UI.Success("Auto Awakening", "ON")
             local bar = LP:WaitForChild("PlayerStats"):WaitForChild("AwakeningBar")
             awakenConn = RunService.RenderStepped:Connect(function()
@@ -31158,8 +31166,12 @@ Join discord for more information!
     local flowOn     = false
     local flowThresh = 100
     local flowConn   = nil
-    local FlowRE     = ReplicatedStorage:WaitForChild("Packages"):WaitForChild("Knit")
-        :WaitForChild("Services"):WaitForChild("FlowService"):WaitForChild("RE"):WaitForChild("Activate")
+    local FlowRE     = nil
+    
+    pcall(function()
+        FlowRE = ReplicatedStorage:WaitForChild("Packages", 2):WaitForChild("Knit", 2)
+            :WaitForChild("Services", 2):WaitForChild("FlowService", 2):WaitForChild("RE", 2):WaitForChild("Activate", 2)
+    end)
 
     MainTab:AddSlider("Flow Start Bar", {
         Min = 30, Max = 100, Default = 100, Increment = 5, Flag = "FlowStartBar"
@@ -31171,6 +31183,10 @@ Join discord for more information!
         flowOn = v
         if flowConn then flowConn:Disconnect(); flowConn = nil end
         if v then
+            if not FlowRE then
+                UI.Error("Auto Flow", "Flow system not found!")
+                return
+            end
             UI.Success("Auto Flow", "ON")
             local bar = LP:WaitForChild("PlayerStats"):WaitForChild("FlowBar")
             if bar.Value >= flowThresh then pcall(function() FlowRE:FireServer() end) end
