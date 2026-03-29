@@ -31538,7 +31538,7 @@ Join discord for more information!
     MiscTab:AddSection("Run the Auto Goalkeeper | Not 100% Accurate, but still good i think")
 
     MiscTab:AddButton("Auto GK", function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/yz188u/agk/main/main.luau", true))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Floute-amd/scripts/refs/heads/main/autogk.luau", true))()
         UI.Success("Auto GK", "Script loaded successfully!")
     end)
 
