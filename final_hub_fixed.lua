@@ -30805,7 +30805,7 @@ local TeleportService = game:GetService("TeleportService")
 local UIS = game:GetService("UserInputService")
 local CoreGui = game:GetService("CoreGui")
 
-local DISCORD_URL = "https://discord.gg/X4H7phPu8P"
+local DISCORD_URL = "no discord yet, soon tho"
 
 -- Device Detection
 local device = "PC"
@@ -30911,11 +30911,11 @@ Join discord for more information!
     InfoTab:AddSection("Socials")
     InfoTab:AddDivider()
     InfoTab:AddButton("YouTube", function()
-        setclipboard("https://discord.gg/YM5C7VQB")
+        setclipboard("nga no ytb yet")
         UI.Success("YouTube", "Link copied to clipboard!")
     end)
     InfoTab:AddButton("TikTok", function()
-        setclipboard("https://discord.gg/YM5C7VQB")
+        setclipboard("nga i dont use tiktok wtf")
         UI.Success("TikTok", "Link copied to clipboard!")
     end)
     InfoTab:AddButton("Join Our Discord Server!", function()
