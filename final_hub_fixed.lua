@@ -31298,7 +31298,11 @@ Join discord for more information!
     local mobPower   = 180
     local mobOn      = false
     local mobConn    = nil
-    local shootBtn   = LP.PlayerGui.Mobile.Ball.Shoot
+    local shootBtn   = nil
+    
+    pcall(function()
+        shootBtn = LP.PlayerGui.Mobile.Ball.Shoot
+    end)
 
     MainTab:AddSlider("Power | Mobile", {
         Min = 0, Max = 1000, Default = 180, Flag = "MobilePowerSlider"
@@ -31309,10 +31313,12 @@ Join discord for more information!
     }, function(v)
         mobOn = v
         if mobConn then mobConn:Disconnect(); mobConn = nil end
-        if mobOn then
+        if mobOn and shootBtn then
             mobConn = shootBtn.MouseButton1Click:Connect(function()
                 BallRE.Shoot:FireServer(mobPower, nil, Vector3.new(1, 0, 0))
             end)
+        elseif mobOn and not shootBtn then
+            UI.Error("Mobile Power", "Mobile GUI not found!")
         end
     end)
 
