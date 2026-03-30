@@ -11668,13 +11668,29 @@ function Xan:CreateWindow(config)
     local hiddenSize = UDim2.new(0, originalSize.X.Offset * 0.92, 0, 0)
     
     function window:Show()
-        if isAnimating then return end
-        if window.Visible then return end
+        print("[DEBUG] Show() called")
+        print("[DEBUG] isAnimating:", isAnimating)
+        print("[DEBUG] window.Visible:", window.Visible)
+        
+        -- Force reset isAnimating if stuck
+        if isAnimating then 
+            print("[DEBUG] WARNING: isAnimating was true, forcing reset")
+            isAnimating = false
+        end
+        
+        if window.Visible then 
+            print("[DEBUG] Already visible")
+            return 
+        end
+        
         isAnimating = true
         window.Visible = true
         Xan.Open = true
         screenGui.Enabled = true
         mainFrame.Visible = true
+        print("[DEBUG] Show() - UI should now be visible")
+        print("[DEBUG] screenGui.Enabled:", screenGui.Enabled)
+        print("[DEBUG] mainFrame.Visible:", mainFrame.Visible)
         
         if window._activeListWasVisible then
             Xan.ActiveBindsVisible = true
@@ -11773,11 +11789,21 @@ function Xan:CreateWindow(config)
     end
     
     function window:Hide()
-        if isAnimating then return end
-        if not window.Visible then return end
+        print("[DEBUG] Hide() called")
+        print("[DEBUG] isAnimating:", isAnimating)
+        print("[DEBUG] window.Visible:", window.Visible)
+        if isAnimating then 
+            print("[DEBUG] Hide blocked by isAnimating")
+            return 
+        end
+        if not window.Visible then 
+            print("[DEBUG] Already hidden")
+            return 
+        end
         isAnimating = true
         window.Visible = false
         Xan.Open = false
+        print("[DEBUG] Hide() - Starting hide animation")
         
         window._activeListWasVisible = Xan.ActiveBindsVisible
         Xan:HideBindList()
@@ -11826,10 +11852,18 @@ function Xan:CreateWindow(config)
     end
     
     function window:Toggle()
-        if isAnimating then return end
+        print("[DEBUG] Toggle() called")
+        print("[DEBUG] isAnimating:", isAnimating)
+        print("[DEBUG] window.Visible:", window.Visible)
+        if isAnimating then 
+            print("[DEBUG] Toggle blocked by isAnimating")
+            return 
+        end
         if window.Visible then
+            print("[DEBUG] Calling Hide()")
             window:Hide()
         else
+            print("[DEBUG] Calling Show()")
             window:Show()
         end
     end
