@@ -1,3 +1,21 @@
+-- ============================================================
+-- XZuyaX Hub - Merged Version (No Key System)
+-- UI Library + Main Script Combined
+-- ============================================================
+
+--[[
+    QUICK START (3 lines to a full hub):
+    
+    local UI = loadstring(game:HttpGet("URL"))()
+    local win, tab = UI.Quick("My Hub", "Combat", "crosshair")
+    
+    tab:AddToggle("Aimbot", "aim_on", function(v) Aimbot.Enabled = v end)
+    tab:AddSlider("FOV", "aim_fov", {10, 150, Default = 60}, function(v) end)
+    tab:AddDropdown("Hitbox", "aim_hit", {"Head", "Torso"}, function(v) end)
+    
+    -- Demo window: UI.Demo()
+    -- Schema builder: UI.Build({ Title = "Hub", Tabs = {...} })
+]]
 
 
 
@@ -27390,10 +27408,10 @@ Xan.Emoji = {
     Money = "ðŸ¤‘", Hug = "ðŸ¤—", Think = "ðŸ¤”", Shh = "ðŸ¤«", Neutral = "ðŸ˜", Unamused = "ðŸ˜’",
     Roll_Eyes = "ðŸ™„", Grimace = "ðŸ˜¬", Relieved = "ðŸ˜Œ", Pensive = "ðŸ˜”", Sleepy = "ðŸ˜ª",
     Sleep = "ðŸ˜´", Sick = "ðŸ¤¢", Hot = "ðŸ¥µ", Cold = "ðŸ¥¶", Woozy = "ðŸ¥´", Exploding = "ðŸ¤¯",
-    Cowboy = "ðŸ¤ ", Party = "ðŸ¥³", Sunglasses = "ðŸ˜Ž", Nerd = "ðŸ¤“", Confused = "ðŸ˜•",
+    Cowboy = "ðŸ¤ ", Party = "ðŸ¥³", Sunglasses = "ðŸ˜Ž", Nerd = "ðŸ¤“", Confused = "ðŸ˜•",
     Worried = "ðŸ˜Ÿ", Frown = "ðŸ™", Sad = "ðŸ˜¢", Cry = "ðŸ˜­", Scream = "ðŸ˜±", Fear = "ðŸ˜¨",
     Anxious = "ðŸ˜°", Sweat = "ðŸ˜“", Tired = "ðŸ˜«", Yawn = "ðŸ¥±", Triumph = "ðŸ˜¤",
-    Angry = "ðŸ˜ ", Rage = "ðŸ˜¡", Curse = "ðŸ¤¬", Smirk = "ðŸ˜", Devil = "ðŸ˜ˆ",
+    Angry = "ðŸ˜ ", Rage = "ðŸ˜¡", Curse = "ðŸ¤¬", Smirk = "ðŸ˜", Devil = "ðŸ˜ˆ",
     Skull = "ðŸ’€", Poop = "ðŸ’©", Clown = "ðŸ¤¡", Ghost = "ðŸ‘»", Alien = "ðŸ‘½", Robot = "ðŸ¤–",
     Heart_Red = "â¤ï¸", Heart_Orange = "ðŸ§¡", Heart_Yellow = "ðŸ’›", Heart_Green = "ðŸ’š",
     Heart_Blue = "ðŸ’™", Heart_Purple = "ðŸ’œ", Heart_Black = "ðŸ–¤", Heart_White = "ðŸ¤",
@@ -27402,7 +27420,7 @@ Xan.Emoji = {
     Boom = "ðŸ’¥", Zap = "âš¡", Dizzy = "ðŸ’«", Sweat_Drops = "ðŸ’¦", Dash = "ðŸ’¨",
     Wave = "ðŸ‘‹", Ok = "ðŸ‘Œ", Victory = "âœŒï¸", Rock = "ðŸ¤˜", Thumb_Up = "ðŸ‘", Thumb_Down = "ðŸ‘Ž",
     Fist = "âœŠ", Punch = "ðŸ‘Š", Clap = "ðŸ‘", Raised_Hands = "ðŸ™Œ", Pray = "ðŸ™", Muscle = "ðŸ’ª",
-    Eyes = "ðŸ‘€", Eye = "ðŸ‘ï¸", Brain = "ðŸ§ ", Bone = "ðŸ¦´", Lips = "ðŸ‘„",
+    Eyes = "ðŸ‘€", Eye = "ðŸ‘ï¸", Brain = "ðŸ§ ", Bone = "ðŸ¦´", Lips = "ðŸ‘„",
     Baby = "ðŸ‘¶", Boy = "ðŸ‘¦", Girl = "ðŸ‘§", Man = "ðŸ‘¨", Woman = "ðŸ‘©", Person = "ðŸ§‘",
     Police = "ðŸ‘®", Detective = "ðŸ•µï¸", Ninja = "ðŸ¥·", Prince = "ðŸ¤´", Princess = "ðŸ‘¸",
     Angel = "ðŸ‘¼", Santa = "ðŸŽ…", Superhero = "ðŸ¦¸", Mage = "ðŸ§™", Vampire = "ðŸ§›", Zombie = "ðŸ§Ÿ",
@@ -27422,7 +27440,7 @@ Xan.Emoji = {
     Cookie = "ðŸª", Doughnut = "ðŸ©", Candy = "ðŸ¬", Lollipop = "ðŸ­", Chocolate = "ðŸ«",
     Coffee = "â˜•", Tea = "ðŸµ", Beer = "ðŸº", Wine = "ðŸ·", Cocktail = "ðŸ¸", Champagne = "ðŸ¾",
     Globe = "ðŸŒ", Map = "ðŸ—ºï¸", Compass = "ðŸ§­", Mountain = "â›°ï¸", Volcano = "ðŸŒ‹",
-    Beach = "ðŸ–ï¸", Island = "ðŸï¸", Desert = "ðŸœï¸", House = "ðŸ ", Office = "ðŸ¢",
+    Beach = "ðŸ–ï¸", Island = "ðŸï¸", Desert = "ðŸœï¸", House = "ðŸ ", Office = "ðŸ¢",
     Hospital = "ðŸ¥", School = "ðŸ«", Factory = "ðŸ­", Castle = "ðŸ°", Church = "â›ª",
     Mosque = "ðŸ•Œ", Tent = "â›º", Fountain = "â›²", Tower = "ðŸ—¼", Statue = "ðŸ—½",
     Car = "ðŸš—", Bus = "ðŸšŒ", Truck = "ðŸšš", Ambulance = "ðŸš‘", Fire_Engine = "ðŸš’",
@@ -27436,12 +27454,12 @@ Xan.Emoji = {
     Gift = "ðŸŽ", Balloon = "ðŸŽˆ", Party_Popper = "ðŸŽ‰", Confetti = "ðŸŽŠ", Ribbon = "ðŸŽ€",
     
     Target = "ðŸŽ¯", Controller = "ðŸŽ®", Joystick = "ðŸ•¹ï¸", Gear = "âš™ï¸", Palette = "ðŸŽ¨",
-    Plug = "ðŸ”Œ", Plugin = "ðŸ”Œ", Hubs = "ðŸ ", Home = "ðŸ ", Settings = "âš™ï¸",
+    Plug = "ðŸ”Œ", Plugin = "ðŸ”Œ", Hubs = "ðŸ ", Home = "ðŸ ", Settings = "âš™ï¸",
     Gun = "ðŸ”«", Aimbot = "ðŸ”«", ESP = "ðŸ‘ï¸", Visuals = "ðŸŽ¨", Radar = "ðŸ“¡",
     Misc = "ðŸ”§", Wrench = "ðŸ”§", Player = "ðŸ§‘", World = "ðŸŒ", Speed = "âš¡",
     Combat = "âš”ï¸", Movement = "ðŸƒ", Exploit = "ðŸ’‰", Debug = "ðŸ›", Render = "ðŸ–¼ï¸",
     Layouts = "ðŸ“", Buttons = "ðŸ”˜", Download = "â¬‡ï¸", Preview = "ðŸ‘€",
-    Themes = "ðŸŽ¨", Info = "â„¹ï¸", Warning = "âš ï¸", Error = "âŒ", Success = "âœ…",
+    Themes = "ðŸŽ¨", Info = "â„¹ï¸", Warning = "âš ï¸", Error = "âŒ", Success = "âœ…",
     Search = "ðŸ”", Lock = "ðŸ”’", Unlock = "ðŸ”“", Key = "ðŸ”‘", Shield = "ðŸ›¡ï¸"
 }
 local EmojiIcons = {
@@ -27466,7 +27484,7 @@ local EmojiIcons = {
     Syringe = "ðŸ’‰", Pill = "ðŸ’Š", Bandage = "ðŸ©¹", Microscope = "ðŸ”¬", Telescope = "ðŸ”­",
     Door = "ðŸšª", Bed = "ðŸ›ï¸", Chair = "ðŸª‘", Toilet = "ðŸš½", Shower = "ðŸš¿", Bath = "ðŸ›",
     Shopping = "ðŸ›’", Soap = "ðŸ§¼", Toothbrush = "ðŸª¥", Broom = "ðŸ§¹", Basket = "ðŸ§º",
-    Warning = "âš ï¸", No_Entry = "â›”", Prohibited = "ðŸš«", Radioactive = "â˜¢ï¸", Biohazard = "â˜£ï¸",
+    Warning = "âš ï¸", No_Entry = "â›”", Prohibited = "ðŸš«", Radioactive = "â˜¢ï¸", Biohazard = "â˜£ï¸",
     Arrow_Up = "â¬†ï¸", Arrow_Down = "â¬‡ï¸", Arrow_Left = "â¬…ï¸", Arrow_Right = "âž¡ï¸",
     Play = "â–¶ï¸", Pause = "â¸ï¸", Stop = "â¹ï¸", Record = "âºï¸", Forward = "â©", Rewind = "âª",
 
@@ -27475,30 +27493,30 @@ local EmojiIcons = {
     Search = "ðŸ”", Zoom_In = "ðŸ”Ž", Settings = "âš™ï¸", Info = "â„¹ï¸", Question = "â“",
     Exclaim = "â—", Check = "âœ…", Cross = "âŒ", Plus = "âž•", Minus = "âž–",
     Multiply = "âœ–ï¸", Divide = "âž—", Equals = "ðŸŸ°", Infinity = "â™¾ï¸",
-    Red_Circle = "ðŸ”´", Orange_Circle = "ðŸŸ ", Yellow_Circle = "ðŸŸ¡", Green_Circle = "ðŸŸ¢",
+    Red_Circle = "ðŸ”´", Orange_Circle = "ðŸŸ ", Yellow_Circle = "ðŸŸ¡", Green_Circle = "ðŸŸ¢",
     Blue_Circle = "ðŸ”µ", Purple_Circle = "ðŸŸ£", Black_Circle = "âš«", White_Circle = "âšª",
     Red_Square = "ðŸŸ¥", Orange_Square = "ðŸŸ§", Yellow_Square = "ðŸŸ¨", Green_Square = "ðŸŸ©",
     Blue_Square = "ðŸŸ¦", Purple_Square = "ðŸŸª", Black_Square = "â¬›", White_Square = "â¬œ",
     Diamond = "ðŸ’Ž", Crown = "ðŸ‘‘", Ring = "ðŸ’", Lipstick = "ðŸ’„",
     Glasses = "ðŸ‘“", Sunglasses_Icon = "ðŸ•¶ï¸", Shirt = "ðŸ‘•", Jeans = "ðŸ‘–", Dress = "ðŸ‘—",
-    Shoe = "ðŸ‘Ÿ", High_Heel = "ðŸ‘ ", Boot = "ðŸ‘¢", Hat = "ðŸŽ©", Cap = "ðŸ§¢", Backpack = "ðŸŽ’",
+    Shoe = "ðŸ‘Ÿ", High_Heel = "ðŸ‘ ", Boot = "ðŸ‘¢", Hat = "ðŸŽ©", Cap = "ðŸ§¢", Backpack = "ðŸŽ’",
     Crosshair = "ðŸŽ¯", Aimbot = "ðŸ”«", ESP = "ðŸ‘ï¸", Visuals = "ðŸŽ¨", Radar = "ðŸ“¡",
     Misc = "ðŸ”§", Player = "ðŸ§‘", World = "ðŸŒ", Speed = "âš¡", Teleport = "ðŸŒ€",
     Combat = "âš”ï¸", Movement = "ðŸƒ", Exploit = "ðŸ’‰", Debug = "ðŸ›", Render = "ðŸ–¼ï¸",
-    UI = "ðŸ–¥ï¸", Hubs = "ðŸ ", Layouts = "ðŸ“", Buttons = "ðŸ”˜", Download = "â¬‡ï¸",
-    Preview = "ðŸ‘€", Plugins = "ðŸ”Œ", Plugin = "ðŸ”Œ", Home = "ðŸ ",
+    UI = "ðŸ–¥ï¸", Hubs = "ðŸ ", Layouts = "ðŸ“", Buttons = "ðŸ”˜", Download = "â¬‡ï¸",
+    Preview = "ðŸ‘€", Plugins = "ðŸ”Œ", Plugin = "ðŸ”Œ", Home = "ðŸ ",
     Themes = "ðŸŽ¨", Theme = "ðŸŽ¨", Palette = "ðŸŽ¨"
 }
 
 Icons.Emoji = EmojiIcons
 
-Icons.HubsEmoji = "ðŸ "
+Icons.HubsEmoji = "ðŸ "
 Icons.PluginsEmoji = "ðŸ”Œ"
 Icons.LayoutsEmoji = "ðŸ“"
 Icons.ButtonsEmoji = "ðŸ”˜"
 Icons.SettingsEmoji = "âš™ï¸"
 Icons.ThemesEmoji = "ðŸŽ¨"
-Icons.HomeEmoji = "ðŸ "
+Icons.HomeEmoji = "ðŸ "
 Icons.AimbotEmoji = "ðŸ”«"
 Icons.ESPEmoji = "ðŸ‘ï¸"
 Icons.VisualsEmoji = "ðŸŽ¨"
@@ -30769,7 +30787,7 @@ local TeleportService = game:GetService("TeleportService")
 local UIS = game:GetService("UserInputService")
 local CoreGui = game:GetService("CoreGui")
 
-local DISCORD_URL = "https://discord.gg/UDYcEkXSAe"
+local DISCORD_URL = "https://discord.gg/X4H7phPu8P"
 
 -- Device Detection
 local device = "PC"
@@ -30779,8 +30797,25 @@ elseif UIS.GamepadEnabled then
     device = "Console"
 end
 
--- Executor Detection (Removed - Universal Support)
-local executor = "Universal"
+-- Executor Detection
+local executor = "Unknown"
+if identifyexecutor then
+    executor = identifyexecutor()
+elseif syn then
+    executor = "Synapse X"
+elseif KRNL_LOADED then
+    executor = "Krnl"
+elseif fluxus then
+    executor = "Fluxus"
+elseif is_sirhurt_closure then
+    executor = "SirHurt"
+elseif OXYGEN then
+    executor = "Oxygen U"
+elseif Delta then
+    executor = "Delta"
+elseif Codex then
+    executor = "Codex"
+end
 
 -- Game Name
 local gameName = "Unknown"
@@ -30808,7 +30843,7 @@ UI.Sideloader({
     OnComplete = function()
 
     local Win = UI.New({
-        Title          = "Hide's HUB",
+        Title          = "XZuyaX's HUB",
         Subtitle       = "Premium Script Hub for Free",
         Theme          = "Midnight",
         Size           = UDim2.new(0, 600, 0, 450),
@@ -30845,9 +30880,9 @@ UI.Sideloader({
     -- ==================== INFO TAB ====================
     InfoTab:AddSection("Information")
     InfoTab:AddDivider()
-    InfoTab:AddLabel("Made by hide, a new way to cheat", "crown", UI.Accent())
+    InfoTab:AddLabel("Made by XZuyaX", "crown", UI.Accent())
     InfoTab:AddLabel("Executor: " .. executor .. " | Device: " .. device, "cpu", UI.Text())
-    InfoTab:AddParagraph("Welcome to Hide's HUB!", "Thanks for using my script!\n\nStay updated with my latest scripts and content by following me on social media!")
+    InfoTab:AddParagraph("Welcome to XZuyaX's HUB!", "Thanks for using my script!\n\nStay updated with my latest scripts and content by following me on social media!")
     InfoTab:AddSection("Changelogs")
     InfoTab:AddDivider()
     InfoTab:AddParagraph("Latest Update", [[
@@ -30859,11 +30894,11 @@ Join discord for more information!
     InfoTab:AddSection("Socials")
     InfoTab:AddDivider()
     InfoTab:AddButton("YouTube", function()
-        setclipboard("https://discord.gg/UDYcEkXSAe")
+        setclipboard("https://youtube.com/@xzuyax-d7n")
         UI.Success("YouTube", "Link copied to clipboard!")
     end)
     InfoTab:AddButton("TikTok", function()
-        setclipboard("https://discord.gg/UDYcEkXSAe")
+        setclipboard("https://www.tiktok.com/@zuyaxrawr?_t=ZS-8vaZDjWUU1R&_r=1")
         UI.Success("TikTok", "Link copied to clipboard!")
     end)
     InfoTab:AddButton("Join Our Discord Server!", function()
@@ -30871,7 +30906,7 @@ Join discord for more information!
         UI.Success("Discord", "Invite link copied to clipboard!")
     end)
 
-    UI.Success("Hide's HUB", "Loaded Successfully!")
+    UI.Success("XZuyaX's HUB", "Loaded Successfully!")
 
     -- ==================== MAIN TAB ====================
     MainTab:AddSection("Team & Role Selection")
@@ -31133,12 +31168,8 @@ Join discord for more information!
     -- AUTO AWAKENING
     local awakenOn   = false
     local awakenConn = nil
-    local AwakenRE   = nil
-    
-    pcall(function()
-        AwakenRE = ReplicatedStorage:WaitForChild("Packages", 2):WaitForChild("Knit", 2)
-            :WaitForChild("Services", 2):WaitForChild("AwakeningService", 2):WaitForChild("RE", 2):WaitForChild("StartAwakening", 2)
-    end)
+    local AwakenRE   = ReplicatedStorage:WaitForChild("Packages"):WaitForChild("Knit")
+        :WaitForChild("Services"):WaitForChild("AwakeningService"):WaitForChild("RE"):WaitForChild("StartAwakening")
 
     MainTab:AddToggle("Auto Awakening", {
         Default = false, Flag = "AutoAwakening"
@@ -31146,10 +31177,6 @@ Join discord for more information!
         awakenOn = v
         if awakenConn then awakenConn:Disconnect(); awakenConn = nil end
         if v then
-            if not AwakenRE then
-                UI.Error("Auto Awakening", "Awakening system not found!")
-                return
-            end
             UI.Success("Auto Awakening", "ON")
             local bar = LP:WaitForChild("PlayerStats"):WaitForChild("AwakeningBar")
             awakenConn = RunService.RenderStepped:Connect(function()
@@ -31162,43 +31189,6 @@ Join discord for more information!
         end
     end)
 
-    -- AUTO FLOW
-    local flowOn     = false
-    local flowThresh = 100
-    local flowConn   = nil
-    local FlowRE     = nil
-    
-    pcall(function()
-        FlowRE = ReplicatedStorage:WaitForChild("Packages", 2):WaitForChild("Knit", 2)
-            :WaitForChild("Services", 2):WaitForChild("FlowService", 2):WaitForChild("RE", 2):WaitForChild("Activate", 2)
-    end)
-
-    MainTab:AddSlider("Flow Start Bar", {
-        Min = 30, Max = 100, Default = 100, Increment = 5, Flag = "FlowStartBar"
-    }, function(v) flowThresh = v end)
-
-    MainTab:AddToggle("Auto Flow", {
-        Default = false, Flag = "AutoFlow"
-    }, function(v)
-        flowOn = v
-        if flowConn then flowConn:Disconnect(); flowConn = nil end
-        if v then
-            if not FlowRE then
-                UI.Error("Auto Flow", "Flow system not found!")
-                return
-            end
-            UI.Success("Auto Flow", "ON")
-            local bar = LP:WaitForChild("PlayerStats"):WaitForChild("FlowBar")
-            if bar.Value >= flowThresh then pcall(function() FlowRE:FireServer() end) end
-            flowConn = bar:GetPropertyChangedSignal("Value"):Connect(function()
-                if flowOn and bar.Value >= flowThresh then
-                    pcall(function() FlowRE:FireServer() end)
-                end
-            end)
-        else
-            UI.Warning("Auto Flow", "OFF")
-        end
-    end)
 
     -- INFINITE STAMINA
     MainTab:AddToggle("Infinite Stamina", {
@@ -31274,44 +31264,6 @@ Join discord for more information!
         end)
     end)
 
-    -- ===== FLOW / FLOWS =====
-    MainTab:AddSection("Only Works on some Flows")
-
-    MainTab:AddToggle("Get Flow Buff | Inf Flow", {
-        Default = false, Flag = "ToggleFlowFlag"
-    }, function(v)
-        local stats = LP:FindFirstChild("PlayerStats")
-        if stats and stats:FindFirstChild("InFlow") then
-            stats.InFlow.Value = v
-            UI.Success("Flow Buff", "Flow Buff " .. (v and "activated!" or "deactivated!"))
-        else
-            UI.Error("Flow Buff", "PlayerStats not found!")
-        end
-    end)
-
-    local ok, Flows = pcall(function()
-        return require(ReplicatedStorage.Shared.Flows)
-    end)
-    
-    if ok and Flows then
-        local flowOpts = {}
-        for name in pairs(Flows) do table.insert(flowOpts, name) end
-        table.sort(flowOpts)
-
-        MainTab:AddDropdown("FLOW CHANGER", {
-            Options = flowOpts, Default = "Default", Flag = "FlowChangerFlag"
-        }, function(opt)
-            local stats = LP:FindFirstChild("PlayerStats")
-            if stats then
-                stats.Flow.Value = opt
-                UI.Success("Flow Changer", "Flow changed to: " .. opt)
-            else
-                UI.Error("Flow Changer", "PlayerStats not found!")
-            end
-        end)
-    else
-        UI.Warning("Flow Changer", "Flow system not available in this game.")
-    end
 
     -- ===== DRIBBLE =====
     MainTab:AddSection("Dribble Controls")
@@ -31322,7 +31274,7 @@ Join discord for more information!
     }, function(v)
         if v then
             if not dribbleLoaded then
-                loadstring(game:HttpGet("https://raw.githubusercontent.com/Floute-amd/scripts/refs/heads/main/autodribble.lua", true))()
+                loadstring(game:HttpGet("https://raw.githubusercontent.com/XZuuyaX/Auto-Dribble/refs/heads/main/Main.lua", true))()
                 dribbleLoaded = true
             end
             getgenv().AutoDribbleSettings.Enabled = true
@@ -31346,11 +31298,7 @@ Join discord for more information!
     local mobPower   = 180
     local mobOn      = false
     local mobConn    = nil
-    local shootBtn   = nil
-    
-    pcall(function()
-        shootBtn = LP.PlayerGui.Mobile.Ball.Shoot
-    end)
+    local shootBtn   = LP.PlayerGui.Mobile.Ball.Shoot
 
     MainTab:AddSlider("Power | Mobile", {
         Min = 0, Max = 1000, Default = 180, Flag = "MobilePowerSlider"
@@ -31361,12 +31309,10 @@ Join discord for more information!
     }, function(v)
         mobOn = v
         if mobConn then mobConn:Disconnect(); mobConn = nil end
-        if mobOn and shootBtn then
+        if mobOn then
             mobConn = shootBtn.MouseButton1Click:Connect(function()
                 BallRE.Shoot:FireServer(mobPower, nil, Vector3.new(1, 0, 0))
             end)
-        elseif mobOn and not shootBtn then
-            UI.Error("Mobile Power", "Mobile GUI not found!")
         end
     end)
 
@@ -31560,7 +31506,7 @@ Join discord for more information!
     MiscTab:AddSection("Run the Auto Goalkeeper | Not 100% Accurate, but still good i think")
 
     MiscTab:AddButton("Auto GK", function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/Floute-amd/scripts/refs/heads/main/autogk.luau", true))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/yz188u/agk/main/main.luau", true))()
         UI.Success("Auto GK", "Script loaded successfully!")
     end)
 
@@ -31597,7 +31543,7 @@ Join discord for more information!
         Default = false, Flag = "NoCooldownToggle"
     }, function(v)
         if not ncdLoaded then
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/Floute-amd/scripts/refs/heads/main/ncd.lua"))()
+            loadstring(game:HttpGet("https://xzuyax-hub.vercel.app/Ncd"))()
             ncdLoaded = true
         end
         if v then
@@ -31955,7 +31901,7 @@ Join discord for more information!
 
     -- BALL TRAJECTORY
     _G.Predicting = false
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/Floute-amd/scripts/refs/heads/main/trajectory.lua"))()
+    loadstring(game:HttpGet("https://xzuyax-hub.vercel.app/Tj.lua"))()
     VTab:AddToggle("Ball Trajectory", {
         Default = false, Flag = "BallTrajectToggleFlag",
         Callback = function(v) _G.Predicting = v end
