@@ -1,23 +1,3 @@
--- ============================================================
--- XZuyaX Hub - Merged Version (No Key System)
--- UI Library + Main Script Combined
--- ============================================================
-
---[[
-    QUICK START (3 lines to a full hub):
-    
-    local UI = loadstring(game:HttpGet("URL"))()
-    local win, tab = UI.Quick("My Hub", "Combat", "crosshair")
-    
-    tab:AddToggle("Aimbot", "aim_on", function(v) Aimbot.Enabled = v end)
-    tab:AddSlider("FOV", "aim_fov", {10, 150, Default = 60}, function(v) end)
-    tab:AddDropdown("Hitbox", "aim_hit", {"Head", "Torso"}, function(v) end)
-    
-    -- Demo window: UI.Demo()
-    -- Schema builder: UI.Build({ Title = "Hub", Tabs = {...} })
-]]
-
-
 
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
@@ -30832,19 +30812,19 @@ function CreateMainWindow()
 UI.Sideloader({
     Steps = {
         "Checking executor...",
-        "Loading modules...",
-        "Initializing UI...",
-        "Fetching game data...",
-        "Bypassing Anti-Cheat...",
-        "Bypass Successfully!",
-        "Script Loaded!"
+        "Leaking eu ranking...",
+        "Initializing flag rulebook nuke...",
+        "Fetching bew leaks...",
+        "Bypassing Eu IP ban...",
+        "Bypass Successfully 8 alt in eu btw!",
+        "Script Loaded ty to ryokin for helping me!"
     },
     StepDelay  = 0.1,
     OnComplete = function()
 
     local Win = UI.New({
-        Title          = "XZuyaX's HUB",
-        Subtitle       = "Premium Script Hub for Free",
+        Title          = "Floute's HUB",
+        Subtitle       = "Premium Script Hub made keyless by floute, and added some shit",
         Theme          = "Midnight",
         Size           = UDim2.new(0, 600, 0, 450),
         Logo           = "rbxassetid://86136928465509",
@@ -30880,9 +30860,9 @@ UI.Sideloader({
     -- ==================== INFO TAB ====================
     InfoTab:AddSection("Information")
     InfoTab:AddDivider()
-    InfoTab:AddLabel("Made by XZuyaX", "crown", UI.Accent())
+    InfoTab:AddLabel("Skidded by Floute", "crown", UI.Accent())
     InfoTab:AddLabel("Executor: " .. executor .. " | Device: " .. device, "cpu", UI.Text())
-    InfoTab:AddParagraph("Welcome to XZuyaX's HUB!", "Thanks for using my script!\n\nStay updated with my latest scripts and content by following me on social media!")
+    InfoTab:AddParagraph("Welcome to Floute's HUB!", "Thanks for using the script i skidded !\n\nFloute on top !")
     InfoTab:AddSection("Changelogs")
     InfoTab:AddDivider()
     InfoTab:AddParagraph("Latest Update", [[
@@ -30894,11 +30874,11 @@ Join discord for more information!
     InfoTab:AddSection("Socials")
     InfoTab:AddDivider()
     InfoTab:AddButton("YouTube", function()
-        setclipboard("https://youtube.com/@xzuyax-d7n")
+        setclipboard("https://discord.gg/YM5C7VQB")
         UI.Success("YouTube", "Link copied to clipboard!")
     end)
     InfoTab:AddButton("TikTok", function()
-        setclipboard("https://www.tiktok.com/@zuyaxrawr?_t=ZS-8vaZDjWUU1R&_r=1")
+        setclipboard("https://discord.gg/YM5C7VQB")
         UI.Success("TikTok", "Link copied to clipboard!")
     end)
     InfoTab:AddButton("Join Our Discord Server!", function()
@@ -30906,7 +30886,7 @@ Join discord for more information!
         UI.Success("Discord", "Invite link copied to clipboard!")
     end)
 
-    UI.Success("XZuyaX's HUB", "Loaded Successfully!")
+    UI.Success("Floute's HUB", "Loaded Successfully!")
 
     -- ==================== MAIN TAB ====================
     MainTab:AddSection("Team & Role Selection")
