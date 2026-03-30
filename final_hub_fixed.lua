@@ -32550,7 +32550,10 @@ end)
             if not gp and i.KeyCode == Enum.KeyCode.RightShift then return end
         end)
         bindConn = UIS.InputBegan:Connect(function(i, gp)
-            if not gp and i.KeyCode == Enum.KeyCode[curBind] then Win:Toggle() end
+            if gp then return end
+            if i.KeyCode == Enum.KeyCode[curBind] then 
+                Win:Toggle() 
+            end
         end)
     end
 
