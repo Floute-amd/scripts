@@ -32552,7 +32552,14 @@ end)
         bindConn = UIS.InputBegan:Connect(function(i, gp)
             if gp then return end
             if i.KeyCode == Enum.KeyCode[curBind] then 
-                Win:Toggle() 
+                print("[DEBUG] K key pressed, toggling UI")
+                print("[DEBUG] Win exists:", Win ~= nil)
+                print("[DEBUG] Win.Toggle exists:", Win and Win.Toggle ~= nil)
+                if Win and Win.Toggle then
+                    Win:Toggle()
+                else
+                    warn("[ERROR] Win or Win.Toggle is nil!")
+                end
             end
         end)
     end
