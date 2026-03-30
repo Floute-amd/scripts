@@ -27961,15 +27961,19 @@ Xan.Alert = function(title, content, ntype)
     return _originalNotify(Xan, { Title = title, Content = content or "", Type = ntype or "Warning", Duration = 4 })
 end
 Xan.Success = function(title, content)
+    if getgenv().SilentMode then return end
     return _originalNotify(Xan, { Title = title, Content = content or "", Type = "Success" })
 end
 Xan.Error = function(title, content)
+    if getgenv().SilentMode then return end
     return _originalNotify(Xan, { Title = title, Content = content or "", Type = "Error" })
 end
 Xan.Warning = function(title, content)
+    if getgenv().SilentMode then return end
     return _originalNotify(Xan, { Title = title, Content = content or "", Type = "Warning" })
 end
 Xan.Info = function(title, content)
+    if getgenv().SilentMode then return end
     return _originalNotify(Xan, { Title = title, Content = content or "", Type = "Info" })
 end
 
@@ -30886,7 +30890,6 @@ UI.Sideloader({
     local MiscTab    = Win:AddTab("Misc",           UI.Icons.Misc)
     local PTab       = Win:AddTab("Player",         UI.Icons.Player)
     local VTab       = Win:AddTab("Visual",         UI.Icons.ESP)
-    local ZChatTab   = Win:AddTab("GlobalChat",     UI.Icons.Chat)
     local MenuTab    = Win:AddTab("Menu Function",  UI.Icons.Menu)
     local ServerTab  = Win:AddTab("Server Hop",     UI.Icons.Server)
     local SettingsTab = Win:AddTab("Settings",      UI.Icons.Settings)
@@ -31576,50 +31579,60 @@ Join discord for more information!
     end)
 
     MiscTab:AddButton("No CD V2 | Try this if v1 doesn't work", function()
-        local c = require(ReplicatedStorage.Controllers.AbilityController)
-        task.spawn(function()
-            while true do
-                c.AbilityUsed, c.AbilityOne, c.AbilityTwo, c.AbilityThree = 0, 0, 0, 0
-                local char = LP.Character
-                if char then pcall(function() char:SetAttribute("LastV", 0) end) end
-                task.wait()
-            end
-        end)
-    end)
-
-    local kBypass = { on = false, conn = nil }
-    MiscTab:AddToggle("Kickoff Bypass", {
-        Default = false, Flag = "KickoffBypassFlag"
-    }, function(v)
-        kBypass.on = v
-        if v then
-            pcall(function() game.Workspace:SetAttribute("KickoffAbilityBlocked", false) end)
-            kBypass.conn = game.Workspace.AttributeChanged:Connect(function(attr)
-                if kBypass.on and attr == "KickoffAbilityBlocked" then
-                    pcall(function() game.Workspace:SetAttribute("KickoffAbilityBlocked", false) end)
+        local success, result = pcall(function()
+            local c = require(ReplicatedStorage.Controllers.AbilityController)
+            task.spawn(function()
+                while true do
+                    c.AbilityUsed, c.AbilityOne, c.AbilityTwo, c.AbilityThree = 0, 0, 0, 0
+                    local char = LP.Character
+                    if char then pcall(function() char:SetAttribute("LastV", 0) end) end
+                    task.wait()
                 end
             end)
-            UI.Success("Kickoff Bypass", "Bypass ON")
+        end)
+        
+        if success then
+            UI.Success("No CD V2", "Activated successfully!")
         else
-            if kBypass.conn then kBypass.conn:Disconnect(); kBypass.conn = nil end
-            UI.Warning("Kickoff Bypass", "Bypass OFF")
+            UI.Error("No CD V2", "Failed to load: " .. tostring(result))
         end
     end)
+
+    
 
     -- ==================== PLAYER TAB ====================
     PTab:AddSection("FE COSMETICS")
 
-    local Cosmetics    = require(ReplicatedStorage.Shared.Inventory.Cosmetics)
-    local cosmeticList = {}
-    for name in pairs(Cosmetics) do table.insert(cosmeticList, name) end
-    table.sort(cosmeticList)
-
-    PTab:AddDropdown("Select Cosmetic", {
-        Options = cosmeticList, Default = cosmeticList[1], Flag = "CosmeticDropdown"
-    }, function(opt)
-        ReplicatedStorage.Packages.Knit.Services.CustomizationService.RE.Customize:FireServer("Cosmetics", opt, "1")
-        UI.Banner("Success!", "Equipped: " .. opt)
+    --[[
+    -- TEMPORARILY DISABLED - Causing script to stop
+    local cosmeticsSuccess, Cosmetics = pcall(function()
+        return require(ReplicatedStorage.Shared.Inventory.Cosmetics)
     end)
+
+    if cosmeticsSuccess and Cosmetics then
+        local cosmeticList = {}
+        for name in pairs(Cosmetics) do table.insert(cosmeticList, name) end
+        table.sort(cosmeticList)
+
+        if #cosmeticList > 0 then
+            PTab:AddDropdown("Select Cosmetic", {
+                Options = cosmeticList, Default = cosmeticList[1], Flag = "CosmeticDropdown"
+            }, function(opt)
+                pcall(function()
+                    ReplicatedStorage.Packages.Knit.Services.CustomizationService.RE.Customize:FireServer("Cosmetics", opt, "1")
+                    UI.Banner("Success!", "Equipped: " .. opt)
+                end)
+            end)
+        else
+            PTab:AddLabel("No cosmetics available")
+        end
+    else
+        PTab:AddLabel("Cosmetics module not found")
+        warn("[COSMETICS] Failed to load cosmetics module:", Cosmetics)
+    end
+    --]]
+    
+    PTab:AddLabel("Cosmetics feature temporarily disabled")
 
     -- SPEEDHACK
     local spOn     = false
@@ -31929,511 +31942,88 @@ Join discord for more information!
 
     -- GOAL EFFECT CUSTOMIZATION
     VTab:AddSection("Goal Effect Customization")
+    
+    local goalEffectSuccess = pcall(function()
         -- SELECT GOAL EFFECT (moved here for proper scope)
-    local GoalFX      = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("GoalEffects")
-    local CustomizeRE = Knit.Services.CustomizationService.RE.Customize
-    local wsGoals     = game.Workspace:WaitForChild("Goals")
-    local homeGoal    = wsGoals:WaitForChild("Away")
-    local awayGoal    = wsGoals:WaitForChild("Home")
-    local scoreRS     = ReplicatedStorage:WaitForChild("Goals")
-    local homeScore   = scoreRS:WaitForChild("Home")
-    local awayScore   = scoreRS:WaitForChild("Away")
+        local GoalFX      = ReplicatedStorage:WaitForChild("Assets", 5):WaitForChild("GoalEffects", 5)
+        local CustomizeRE = Knit.Services.CustomizationService.RE.Customize
+        local wsGoals     = game.Workspace:WaitForChild("Goals", 5)
+        local homeGoal    = wsGoals:WaitForChild("Away", 5)
+        local awayGoal    = wsGoals:WaitForChild("Home", 5)
+        local scoreRS     = ReplicatedStorage:WaitForChild("Goals", 5)
+        local homeScore   = scoreRS:WaitForChild("Home", 5)
+        local awayScore   = scoreRS:WaitForChild("Away", 5)
 
-    local NO_EFFECT      = "Remove / None"
-    local selEffect      = NO_EFFECT
-    local lastBallHolder = nil
+        local NO_EFFECT      = "Remove / None"
+        local selEffect      = NO_EFFECT
+        local lastBallHolder = nil
 
-    local fxOpts = { NO_EFFECT }
-    for _, fx in ipairs(GoalFX:GetChildren()) do table.insert(fxOpts, fx.Name) end
+        local fxOpts = { NO_EFFECT }
+        for _, fx in ipairs(GoalFX:GetChildren()) do table.insert(fxOpts, fx.Name) end
 
-    RunService.RenderStepped:Connect(function()
-        local ball = game.Workspace:FindFirstChild("Football")
-        if ball and ball:FindFirstChild("Char") then
-            local v = ball.Char.Value
-            if v and v ~= "" then lastBallHolder = tostring(v) end
+        RunService.RenderStepped:Connect(function()
+            local ball = game.Workspace:FindFirstChild("Football")
+            if ball and ball:FindFirstChild("Char") then
+                local v = ball.Char.Value
+                if v and v ~= "" then lastBallHolder = tostring(v) end
+            end
+        end)
+
+        local function triggerFX(goalModel)
+            if selEffect == NO_EFFECT then return end
+            local part = goalModel:IsA("BasePart") and goalModel
+                or goalModel.PrimaryPart
+                or goalModel:FindFirstChildWhichIsA("BasePart")
+            if part then
+                local fxPath = ReplicatedStorage:WaitForChild("Effects", 5):WaitForChild("GoalEffects", 5):WaitForChild(selEffect, 5)
+                pcall(function() require(fxPath)({ Pos = part.CFrame }) end)
+            end
         end
-    end)
 
-    local function triggerFX(goalModel)
-        if selEffect == NO_EFFECT then return end
-        local part = goalModel:IsA("BasePart") and goalModel
-            or goalModel.PrimaryPart
-            or goalModel:FindFirstChildWhichIsA("BasePart")
-        if part then
-            local fxPath = ReplicatedStorage:WaitForChild("Effects"):WaitForChild("GoalEffects"):WaitForChild(selEffect)
-            pcall(function() require(fxPath)({ Pos = part.CFrame }) end)
-        end
-    end
+        local prevHome = homeScore.Value
+        local prevAway = awayScore.Value
 
-    local prevHome = homeScore.Value
-    local prevAway = awayScore.Value
+        homeScore.Changed:Connect(function(v)
+            if v > prevHome then
+                task.delay(0.1, function()
+                    if lastBallHolder and lastBallHolder:lower() == LP.Name:lower() then
+                        triggerFX(awayGoal)
+                    end
+                end)
+            end
+            prevHome = v
+        end)
 
-    homeScore.Changed:Connect(function(v)
-        if v > prevHome then
-            task.delay(0.1, function()
-                if lastBallHolder and lastBallHolder:lower() == LP.Name:lower() then
-                    triggerFX(awayGoal)
-                end
-            end)
-        end
-        prevHome = v
-    end)
+        awayScore.Changed:Connect(function(v)
+            if v > prevAway then
+                task.delay(0.1, function()
+                    if lastBallHolder and lastBallHolder:lower() == LP.Name:lower() then
+                        triggerFX(homeGoal)
+                    end
+                end)
+            end
+            prevAway = v
+        end)
 
-    awayScore.Changed:Connect(function(v)
-        if v > prevAway then
-            task.delay(0.1, function()
-                if lastBallHolder and lastBallHolder:lower() == LP.Name:lower() then
-                    triggerFX(homeGoal)
-                end
-            end)
-        end
-        prevAway = v
-    end)
-
-    VTab:AddDropdown("Select Goal Effect", {
-        Options = fxOpts, Default = NO_EFFECT, Flag = "GoalEffectSelectFlag"
-    }, function(opt)
-        selEffect = opt
-        if opt ~= NO_EFFECT then
-            pcall(function() CustomizeRE:FireServer("GoalEffects", "Water", nil) end)
-            task.spawn(function()
-                local w = GoalFX:FindFirstChild("Water")
-                if w then w:Destroy() end
-            end)
-        end
+        VTab:AddDropdown("Select Goal Effect", {
+            Options = fxOpts, Default = NO_EFFECT, Flag = "GoalEffectSelectFlag"
+        }, function(opt)
+            selEffect = opt
+            if opt ~= NO_EFFECT then
+                pcall(function() CustomizeRE:FireServer("GoalEffects", "Water", nil) end)
+                task.spawn(function()
+                    local w = GoalFX:FindFirstChild("Water")
+                    if w then w:Destroy() end
+                end)
+            end
+        end)
     end)
     
-VTab:AddSection("Goal Sound")
-
-local goalSoundId  = ""
-local goalSoundOn  = false
-local goalSoundObj = nil
-
-local function playGoalSound()
-    if not goalSoundOn or goalSoundId == "" then return end
-
-    if goalSoundObj then
-        pcall(function() goalSoundObj:Stop(); goalSoundObj:Destroy() end)
-        goalSoundObj = nil
+    if not goalEffectSuccess then
+        VTab:AddLabel("Goal Effects features unavailable")
+        warn("[GOAL EFFECTS] Failed to load goal effects features")
     end
 
-    local rawId = goalSoundId:match("%d+")
-    if not rawId then
-        UI.Warning("Goal Sound", "Sound ID tidak valid!")
-        return
-    end
-
-    local snd = Instance.new("Sound")
-    snd.SoundId = "rbxassetid://" .. rawId
-    snd.Volume  = 10
-    snd.Looped  = false
-    snd.Parent  = game.Workspace
-    goalSoundObj = snd
-
-    pcall(function() snd:Play() end)
-
-    task.delay(7, function()
-        if goalSoundObj == snd then
-            pcall(function() snd:Stop(); snd:Destroy() end)
-            goalSoundObj = nil
-        end
-    end)
-end
-
-homeScore.Changed:Connect(function(v)
-    if v > prevHome then
-        task.delay(0.1, function()
-            if lastBallHolder and lastBallHolder:lower() == LP.Name:lower() then
-                playGoalSound()
-            end
-        end)
-    end
-end)
-
-awayScore.Changed:Connect(function(v)
-    if v > prevAway then
-        task.delay(0.1, function()
-            if lastBallHolder and lastBallHolder:lower() == LP.Name:lower() then
-                playGoalSound()
-            end
-        end)
-    end
-end)
-
-VTab:AddToggle("Goal Sound", {
-    Default = false,
-    Flag    = "GoalSoundToggle"
-}, function(v)
-    goalSoundOn = v
-    if v then
-        UI.Success("Goal Sound", "ON")
-    else
-        if goalSoundObj then
-            pcall(function() goalSoundObj:Stop(); goalSoundObj:Destroy() end)
-            goalSoundObj = nil
-        end
-        UI.Warning("Goal Sound", "OFF")
-    end
-end)
-
-VTab:AddInput("Sound ID", {
-    Default     = "",
-    Placeholder = "Enter Roblox Sound ID (ex: 1234567890)",
-    Flag        = "GoalSoundIdInput"
-}, function(txt)
-    txt = tostring(txt or ""):gsub("%s+", "")
-    local rawId = txt:match("%d+")
-    if rawId then
-        goalSoundId = rawId
-        UI.Success("Goal Sound", "Sound ID set: " .. rawId)
-    elseif txt ~= "" then
-        UI.Warning("Goal Sound", "Invalid ID! Enter numbers only.")
-    end
-end)
-
-VTab:AddButton("Test Sound", function()
-    if goalSoundId == "" then
-        UI.Warning("Goal Sound", "No Sound ID entered yet!")
-        return
-    end
-    playGoalSound()
-    UI.Info("Goal Sound", "Testing Sound ID: " .. goalSoundId)
-end)
-
-    -- ==================== ZCHAT TAB ====================
-    local WS_URL  = "wss://zchatproject.xzuyaxhub.workers.dev/ws"
-    local MAX_MSG = 50
-    local ICON_OWNER = "rbxassetid://86136928465509"
-    local OWNER_IDS  = { [10377534073] = true }
-
-    local msgCache = {}
-    local sendUser = LP.Name
-    local hideSelf = false
-    local wsConn   = nil
-    local wsActive = false
-
-    local function jDecode(s)
-        local ok2, d = pcall(function() return HttpService:JSONDecode(s) end)
-        return ok2 and d or nil
-    end
-    local function jEncode(t)
-        local ok2, d = pcall(function() return HttpService:JSONEncode(t) end)
-        return ok2 and d or nil
-    end
-    local function urlEnc(s)
-        return HttpService:UrlEncode(tostring(s or ""))
-    end
-    local function shortName(n)
-        n = tostring(n or "Unknown")
-        return (#n > 18) and (n:sub(1, 18) .. "...") or n
-    end
-
-    local function hslToHex(hsl)
-        if type(hsl) ~= "string" then return nil end
-        local h, s, l = hsl:match("hsl%((%-?%d+),%s*(%d+)%%,?%s*(%d+)%%%?)")
-        if not h then return nil end
-        h = tonumber(h) % 360
-        s = tonumber(s) / 100
-        l = tonumber(l) / 100
-        local function hue2rgb(p, q, t)
-            if t < 0 then t = t + 1 end; if t > 1 then t = t - 1 end
-            if t < 1/6 then return p + (q-p)*6*t end
-            if t < 1/2 then return q end
-            if t < 2/3 then return p + (q-p)*(2/3-t)*6 end
-            return p
-        end
-        local r, g, b
-        if s == 0 then
-            r, g, b = l, l, l
-        else
-            local q2 = l < 0.5 and (l*(1+s)) or (l+s-l*s)
-            local p2 = 2*l - q2
-            r = hue2rgb(p2, q2, h/360 + 1/3)
-            g = hue2rgb(p2, q2, h/360)
-            b = hue2rgb(p2, q2, h/360 - 1/3)
-        end
-        return string.format("#%02X%02X%02X",
-            math.floor(r*255+0.5), math.floor(g*255+0.5), math.floor(b*255+0.5))
-    end
-
-    local function normColor(col, uid)
-        col = tostring(col or "")
-        if col:match("^hsl%(") then
-            local hx = hslToHex(col)
-            if hx then return hx end
-        end
-        if col:match("^#%x%x%x%x%x%x$") then return col end
-        local n = tonumber(uid) or 0
-        return string.format("#%02X%02X%02X",
-            (n*97)%200+30, (n*57)%200+30, (n*29)%200+30)
-    end
-
-    local function getWSConnect()
-        if syn and syn.websocket and syn.websocket.connect then return syn.websocket.connect end
-        if WebSocket and WebSocket.connect then return WebSocket.connect end
-        if websocket and websocket.connect then return websocket.connect end
-        return nil
-    end
-    local WSConnect = getWSConnect()
-
-    local function getChatScroll()
-        local ok2, p = pcall(function()
-            return CoreGui["XanBar_XZuyaX'sHUB"].Main.Content.ContentContainer.GlobalChat.Scroll
-        end)
-        return ok2 and p or nil
-    end
-
-    local function buildChatUI()
-        local parent = getChatScroll()
-        if not parent then warn("[ZCHAT] Need Xan UI"); return end
-
-        local old = parent:FindFirstChild("ZCHAT_UI")
-        if old then old:Destroy() end
-
-        local holder = Instance.new("Frame", parent)
-        holder.Name  = "ZCHAT_UI"
-        holder.BackgroundTransparency = 1
-        holder.Size  = UDim2.new(1, 0, 1, 0)
-
-        local frame = Instance.new("Frame", holder)
-        frame.BackgroundColor3    = Color3.fromRGB(15, 15, 20)
-        frame.BackgroundTransparency = 0.12
-        frame.BorderSizePixel     = 0
-        frame.Position            = UDim2.new(0.02, 0, 0.02, 0)
-        frame.Size                = UDim2.new(0.96, 0, 0.96, 0)
-        Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 12)
-
-        local title = Instance.new("TextLabel", frame)
-        title.BackgroundTransparency = 1
-        title.Position  = UDim2.new(0.03, 0, 0.02, 0)
-        title.Size      = UDim2.new(0.94, 0, 0.06, 0)
-        title.Font      = Enum.Font.GothamBold
-        title.TextSize  = 14
-        title.TextXAlignment = Enum.TextXAlignment.Left
-        title.TextColor3 = Color3.fromRGB(255, 255, 255)
-        title.Text      = "ðŸ’¬ ZChat"
-
-        local scroll = Instance.new("ScrollingFrame", frame)
-        scroll.Name           = "Scroll"
-        scroll.Position       = UDim2.new(0.03, 0, 0.10, 0)
-        scroll.Size           = UDim2.new(0.94, 0, 0.68, 0)
-        scroll.CanvasSize     = UDim2.new(0, 0, 0, 0)
-        scroll.ScrollBarThickness = 4
-        scroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
-        scroll.BackgroundTransparency = 1
-        Instance.new("UIListLayout", scroll).Padding = UDim.new(0, 6)
-
-        local inputBox = Instance.new("TextBox", frame)
-        inputBox.Position        = UDim2.new(0.03, 0, 0.80, 0)
-        inputBox.Size            = UDim2.new(0.70, 0, 0.08, 0)
-        inputBox.Text            = ""
-        inputBox.BackgroundColor3 = Color3.fromRGB(10, 10, 14)
-        inputBox.TextColor3      = Color3.new(1, 1, 1)
-        inputBox.Font            = Enum.Font.Gotham
-        inputBox.TextSize        = 14
-        inputBox.PlaceholderText = "Type message..."
-        inputBox.ClearTextOnFocus = false
-        Instance.new("UICorner", inputBox).CornerRadius = UDim.new(0, 10)
-
-        local sendBtn = Instance.new("TextButton", frame)
-        sendBtn.Position        = UDim2.new(0.75, 0, 0.80, 0)
-        sendBtn.Size            = UDim2.new(0.22, 0, 0.08, 0)
-        sendBtn.Text            = "Send"
-        sendBtn.Font            = Enum.Font.GothamBold
-        sendBtn.TextSize        = 14
-        sendBtn.TextColor3      = Color3.new(1, 1, 1)
-        sendBtn.BackgroundColor3 = Color3.fromRGB(90, 60, 160)
-        Instance.new("UICorner", sendBtn).CornerRadius = UDim.new(0, 10)
-
-        local statusLbl = Instance.new("TextLabel", frame)
-        statusLbl.BackgroundTransparency = 1
-        statusLbl.Position  = UDim2.new(0.03, 0, 0.90, 0)
-        statusLbl.Size      = UDim2.new(0.94, 0, 0.05, 0)
-        statusLbl.Font      = Enum.Font.Gotham
-        statusLbl.TextSize  = 13
-        statusLbl.TextXAlignment = Enum.TextXAlignment.Left
-        statusLbl.TextColor3 = Color3.fromRGB(200, 200, 200)
-        statusLbl.Text      = "Status: Connecting..."
-
-        return scroll, statusLbl, inputBox, sendBtn
-    end
-
-    local ChatScroll, ChatStatus, ChatInput, ChatSend = buildChatUI()
-    if not ChatScroll then return end
-
-    local function createMsgRow(parent, m)
-        local row = Instance.new("Frame", parent)
-        row.BackgroundTransparency = 1
-        row.Size        = UDim2.new(1, 0, 0, 22)
-        row.AutomaticSize = Enum.AutomaticSize.Y
-
-        local layout = Instance.new("UIListLayout", row)
-        layout.FillDirection       = Enum.FillDirection.Horizontal
-        layout.VerticalAlignment   = Enum.VerticalAlignment.Center
-        layout.Padding             = UDim.new(0, 8)
-
-        if m.icon and tostring(m.icon) ~= "" then
-            local icon = tostring(m.icon)
-            if icon:match("^%d+$") then icon = "rbxassetid://" .. icon end
-            local img = Instance.new("ImageLabel", row)
-            img.Size                  = UDim2.new(0, 16, 0, 16)
-            img.BackgroundTransparency = 1
-            img.Image                 = icon
-            img.ScaleType             = Enum.ScaleType.Fit
-            img.LayoutOrder           = 1
-        end
-
-        local tag      = (m.tag and m.tag ~= "") and ("[" .. m.tag .. "] ") or ""
-        local color    = normColor(m.tagColor, m.uid)
-
-        local nameLbl  = Instance.new("TextLabel", row)
-        nameLbl.BackgroundTransparency = 1
-        nameLbl.RichText      = true
-        nameLbl.TextWrapped   = true
-        nameLbl.AutomaticSize = Enum.AutomaticSize.XY
-        nameLbl.Font          = Enum.Font.GothamBold
-        nameLbl.TextSize      = 13
-        nameLbl.TextXAlignment = Enum.TextXAlignment.Left
-        nameLbl.LayoutOrder   = 2
-        nameLbl.Text          = string.format("<font color='%s'>%s%s</font>:", color, tag, shortName(m.username or "Unknown"))
-
-        local msgLbl   = Instance.new("TextLabel", row)
-        msgLbl.BackgroundTransparency = 1
-        msgLbl.RichText       = false
-        msgLbl.TextWrapped    = true
-        msgLbl.AutomaticSize  = Enum.AutomaticSize.XY
-        msgLbl.Font           = Enum.Font.Gotham
-        msgLbl.TextSize       = 13
-        msgLbl.TextXAlignment = Enum.TextXAlignment.Left
-        msgLbl.TextColor3     = Color3.new(1, 1, 1)
-        msgLbl.LayoutOrder    = 3
-        msgLbl.Text           = tostring(m.m or "")
-    end
-
-    local function renderChat()
-        ChatScroll:ClearAllChildren()
-        Instance.new("UIListLayout", ChatScroll).Padding = UDim.new(0, 6)
-        for _, m in ipairs(msgCache) do
-            pcall(function() createMsgRow(ChatScroll, m) end)
-        end
-        task.defer(function() ChatScroll.CanvasPosition = Vector2.new(0, 1e9) end)
-    end
-
-    local function pushMsg(m)
-        if (not m.icon or tostring(m.icon) == "") and OWNER_IDS[tonumber(m.uid) or 0] then
-            m.icon = ICON_OWNER
-        end
-        m.tagColor = normColor(m.tagColor, m.uid)
-        table.insert(msgCache, m)
-        if #msgCache > MAX_MSG then table.remove(msgCache, 1) end
-        renderChat()
-    end
-
-    local function closeWS()
-        if not wsConn then return end
-        pcall(function()
-            pcall(function() wsConn:Send(jEncode({ type = "bye" })) end)
-            for _, fn in pairs({ "Close", "close", "disconnect" }) do
-                if wsConn[fn] then pcall(function() wsConn[fn](wsConn) end) end
-            end
-        end)
-        wsConn   = nil
-        wsActive = false
-    end
-
-    local function sendChat()
-        if not wsActive or not wsConn then return end
-        local txt = ChatInput.Text:gsub("\n", " "):gsub("%s+", " ")
-        if txt == "" then return end
-        pcall(function()
-            wsConn:Send(jEncode({
-                type     = "send",
-                msg      = txt,
-                hide     = hideSelf,
-                username = sendUser,
-                uid      = LP.UserId
-            }))
-        end)
-        ChatInput.Text = ""
-    end
-
-    ChatSend.MouseButton1Click:Connect(sendChat)
-    ChatInput.FocusLost:Connect(function(e) if e then sendChat() end end)
-
-    local function wsConnect()
-        if not WSConnect then
-            ChatStatus.Text = "Status: WebSocket unsupported"
-            return
-        end
-        closeWS()
-        local url  = WS_URL .. "?uid=" .. LP.UserId .. "&user=" .. urlEnc(sendUser)
-        local ok2, conn = pcall(function() return WSConnect(url) end)
-        if not ok2 or not conn then
-            ChatStatus.Text = "Status: WS connect failed"
-            return
-        end
-        wsConn   = conn
-        wsActive = true
-        msgCache = {}
-        renderChat()
-
-        local function handleMsg(raw)
-            local d = jDecode(raw)
-            if not d then return end
-            if d.type == "msg" and d.data then
-                pushMsg(d.data)
-            elseif d.type == "online" then
-                ChatStatus.Text = "Status: Online | Players: " .. tostring(d.online)
-            elseif d.type == "hello" then
-                ChatStatus.Text = "Status: Online | Players: " .. tostring(d.online or "")
-            elseif d.type == "ping" then
-                pcall(function() wsConn:Send(jEncode({ type = "pong" })) end)
-            end
-        end
-
-        pcall(function()
-            if wsConn.OnMessage then
-                wsConn.OnMessage:Connect(handleMsg)
-            elseif wsConn.onmessage then
-                wsConn.onmessage = function(evt) handleMsg(evt.data or evt) end
-            elseif wsConn.receive then
-                coroutine.wrap(function()
-                    while true do
-                        local ok3, raw = pcall(function() return wsConn.receive() end)
-                        if not ok3 or not raw then break end
-                        handleMsg(raw)
-                    end
-                end)()
-            end
-        end)
-
-        pcall(function()
-            if wsConn.OnClose then
-                wsConn.OnClose:Connect(function() wsActive = false; ChatStatus.Text = "Status: Disconnected" end)
-            elseif wsConn.onclose then
-                wsConn.onclose = function() wsActive = false; ChatStatus.Text = "Status: Disconnected" end
-            end
-        end)
-    end
-
-    ZChatTab:AddInput("Change Username", {
-        Default = sendUser, Placeholder = "Enter Username", Flag = "ZChatUsernameInput"
-    }, function(txt)
-        txt = tostring(txt or ""):sub(1, 30)
-        if #txt < 1 then return end
-        sendUser = txt
-        UI.Success("ZChat", "Username changed to: " .. sendUser)
-        if wsActive and wsConn then
-            pcall(function()
-                wsConn:Send(jEncode({ type = "send", msg = "", username = sendUser, uid = LP.UserId }))
-            end)
-        end
-    end)
-
-    pushMsg({ username = "System", uid = 0, tag = "", icon = "", tagColor = "#888888", m = "ZChat Loaded" })
-    wsConnect()
-
-    -- ==================== MENU TAB ====================
     MenuTab:AddLabel("SHOP")
     MenuTab:AddDivider()
 
@@ -32570,38 +32160,27 @@ end)
     -- ==================== SETTINGS TAB ====================
     SettingsTab:AddSection("UI Settings")
 
-    UI.ToggleKey = nil
-    local curBind     = "K"
-    local bindConn    = nil
-    local rShiftBlock = nil
+    -- Silent Mode - Disable all notifications
+    getgenv().SilentMode = getgenv().SilentMode or false
+    
+    SettingsTab:AddToggle("Silent Mode", {
+        Default = false, Flag = "SilentModeFlag"
+    }, function(v)
+        getgenv().SilentMode = v
+        if not v then
+            UI.Success("Silent Mode", "Notifications enabled")
+        end
+    end)
 
-    local function updateBind(key)
-        if not Enum.KeyCode[key] then return end
-        if bindConn   then bindConn:Disconnect();   bindConn   = nil end
-        if rShiftBlock then rShiftBlock:Disconnect(); rShiftBlock = nil end
-        curBind = key
-        rShiftBlock = UIS.InputBegan:Connect(function(i, gp)
-            if not gp and i.KeyCode == Enum.KeyCode.RightShift then return end
-        end)
-        bindConn = UIS.InputBegan:Connect(function(i, gp)
-            if gp then return end
-            if i.KeyCode == Enum.KeyCode[curBind] then 
-                print("[DEBUG] K key pressed, toggling UI")
-                print("[DEBUG] Win exists:", Win ~= nil)
-                print("[DEBUG] Win.Toggle exists:", Win and Win.Toggle ~= nil)
-                if Win and Win.Toggle then
-                    Win:Toggle()
-                else
-                    warn("[ERROR] Win or Win.Toggle is nil!")
-                end
-            end
-        end)
-    end
+    -- Simply change the default toggle key to K
+    Xan.ToggleKey = Enum.KeyCode.K
 
-    updateBind("K")
     SettingsTab:AddKeybind("Toggle UI Keybind", {
         Default = Enum.KeyCode.K, Flag = "ToggleKeybindFlag"
-    }, function(key) updateBind(key.Name) end)
+    }, function(key) 
+        Xan.ToggleKey = key
+        -- Don't show notification, it's annoying when toggling UI
+    end)
 
     SettingsTab:AddDropdown("UI Theme", {
         Options  = {"Default", "Rose", "Midnight", "Blood", "Emerald", "Forest", "Neon", "Sunset", "Ocean"},
@@ -32609,7 +32188,9 @@ end)
         Flag     = "UIThemeFlag"
     }, function(opt)
         UI.SetTheme(opt)
-        UI.Success("Theme Changed", "UI theme changed to " .. opt)
+        if not getgenv().SilentMode then
+            UI.Success("Theme Changed", "UI theme changed to " .. opt)
+        end
     end)
 
     SettingsTab:AddSection("Performance Settings")
