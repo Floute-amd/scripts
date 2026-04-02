@@ -31780,7 +31780,7 @@ Join discord for more information!
     -- ==================== VISUAL TAB ====================
     local ESP_TEAM   = false
     local ESP_ENEMY  = false
-    local ESP_DIST   = 200
+    local ESP_DIST   = 1000
     local espLabels  = {}
     local espRender  = {}
     local espChar    = {}
