@@ -31934,7 +31934,7 @@ Join discord for more information!
 
     -- BALL TRAJECTORY
     _G.Predicting = false
-    loadstring(game:HttpGet("https://xzuyax-hub.vercel.app/Tj.lua"))()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Floute-amd/scripts/refs/heads/main/trajectory.lua"))()
     VTab:AddToggle("Ball Trajectory", {
         Default = false, Flag = "BallTrajectToggleFlag",
         Callback = function(v) _G.Predicting = v end
