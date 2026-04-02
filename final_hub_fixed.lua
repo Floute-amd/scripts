@@ -31566,7 +31566,7 @@ Join discord for more information!
         Default = false, Flag = "NoCooldownToggle"
     }, function(v)
         if not ncdLoaded then
-            loadstring(game:HttpGet("https://xzuyax-hub.vercel.app/Ncd"))()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/Floute-amd/scripts/refs/heads/main/ncd.lua"))()
             ncdLoaded = true
         end
         if v then
@@ -31603,36 +31603,8 @@ Join discord for more information!
     -- ==================== PLAYER TAB ====================
     PTab:AddSection("FE COSMETICS")
 
-    --[[
-    -- TEMPORARILY DISABLED - Causing script to stop
-    local cosmeticsSuccess, Cosmetics = pcall(function()
-        return require(ReplicatedStorage.Shared.Inventory.Cosmetics)
-    end)
-
-    if cosmeticsSuccess and Cosmetics then
-        local cosmeticList = {}
-        for name in pairs(Cosmetics) do table.insert(cosmeticList, name) end
-        table.sort(cosmeticList)
-
-        if #cosmeticList > 0 then
-            PTab:AddDropdown("Select Cosmetic", {
-                Options = cosmeticList, Default = cosmeticList[1], Flag = "CosmeticDropdown"
-            }, function(opt)
-                pcall(function()
-                    ReplicatedStorage.Packages.Knit.Services.CustomizationService.RE.Customize:FireServer("Cosmetics", opt, "1")
-                    UI.Banner("Success!", "Equipped: " .. opt)
-                end)
-            end)
-        else
-            PTab:AddLabel("No cosmetics available")
-        end
-    else
-        PTab:AddLabel("Cosmetics module not found")
-        warn("[COSMETICS] Failed to load cosmetics module:", Cosmetics)
-    end
-    --]]
-    
-    PTab:AddLabel("Cosmetics feature temporarily disabled")
+    -- Cosmetics feature disabled due to module compatibility issues
+    PTab:AddLabel("Cosmetics currently unavailable")
 
     -- SPEEDHACK
     local spOn     = false
