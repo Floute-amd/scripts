@@ -31411,7 +31411,7 @@ Join discord for more information!
     end
 
     local ballSlider = BallTab:AddSlider("Ball Expander", {
-        Min = 1, Max = 25, Default = 2.5, Increment = 0.1, Flag = "ball_expander"
+        Min = 1, Max = 50, Default = 2.5, Increment = 0.1, Flag = "ball_expander"
     }, function(v) hitboxSz = v; updateHitbox() end)
 
     BallTab:AddSection("Quick Size Keybinds")
