@@ -1,7 +1,7 @@
--- Safety check for executor functions
-if not getgenv then
-    getgenv = function() return _G end
-    warn("[XanBar] getgenv not found, using _G as fallback")
+local getgenv = (getgenv or function() return _G end)
+if type(getgenv) ~= "function" then
+    local oldgetgenv = getgenv
+    getgenv = function() return oldgetgenv end
 end
 
 -- Safe script loader function
@@ -30885,8 +30885,14 @@ pcall(function()
     if info and info.Name then gameName = info.Name end
 end)
 
--- Use the UI Library (Xan is already loaded above)
+-- Resolve naming conflict between primitive UI table and main library
+local _UI = UI
 local UI = Xan
+for k, v in pairs(_UI) do
+    if UI[k] == nil then
+        UI[k] = v
+    end
+end
 
 function CreateMainWindow()
 
@@ -30940,14 +30946,14 @@ UI.Sideloader({
     -- ==================== INFO TAB ====================
     InfoTab:AddSection("Information")
     InfoTab:AddDivider()
-    InfoTab:AddLabel("Skidded by Floute", "crown", UI.Accent())
-    InfoTab:AddLabel("Executor: " .. executor .. " | Device: " .. device, "cpu", UI.Text())
+    InfoTab:AddLabel("Skidded by Floute", "crown")
+    InfoTab:AddLabel("Executor: " .. executor .. " | Device: " .. device, "cpu")
     InfoTab:AddParagraph("Welcome to Floute's HUB!", "Thanks for using the script i skidded !\n\nFloute on top !")
     InfoTab:AddSection("Changelogs")
     InfoTab:AddDivider()
     InfoTab:AddParagraph("Latest Update", [[
-â€¢Goal Sound Added
-â€¢Goal Effects Added
+- Goal Sound Added
+- Goal Effects Added
 
 Join discord for more information!
 ]])
