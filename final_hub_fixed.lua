@@ -99,9 +99,9 @@ local Xan = {
 
 getgenv().XanBarInstance = Xan
 
-local Icons
-local Logos
-local GameIcons
+local Icons = {}
+local Logos = {}
+local GameIcons = {}
 local ActiveBindsGui
 
 
