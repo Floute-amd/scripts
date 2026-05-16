@@ -1,8 +1,14 @@
-local getgenv = (getgenv or function() return _G end)
-if type(getgenv) ~= "function" then
-    local oldgetgenv = getgenv
-    getgenv = function() return oldgetgenv end
+print("[XanBar] Script starting...")
+local getgenv = getgenv
+if not getgenv then
+    local fallback = function() return _G end
+    getgenv = setmetatable({}, {
+        __index = function(_, k) return _G[k] end,
+        __newindex = function(_, k, v) _G[k] = v end,
+        __call = function() return _G end
+    })
 end
+print("[XanBar] getgenv initialized")
 
 -- Safe script loader function
 local function safeLoadScript(url, scriptName)
