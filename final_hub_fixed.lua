@@ -32207,4 +32207,8 @@ Join discord for more information!
 end
 
 -- Auto-start the hub
-CreateMainWindow()
+local success, err = pcall(CreateMainWindow)
+if not success then
+    warn("[XanBar] Failed to create main window:", err)
+    warn("[XanBar] Stack trace:", debug.traceback())
+end
