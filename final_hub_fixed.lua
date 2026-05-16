@@ -3,11 +3,20 @@ if not getgenv then
     getgenv = function() return _G end
     warn("[XanBar] getgenv not found, using _G as fallback")
 end
-if not loadstring then
-    loadstring = function(code)
-        return load(code)
+
+-- Safe loadstring wrapper
+local originalLoadstring = loadstring or load
+loadstring = function(code, chunkname)
+    if not code or code == "" then
+        warn("[XanBar] loadstring received empty code")
+        return nil
     end
-    warn("[XanBar] loadstring not found, using load as fallback")
+    return originalLoadstring(code, chunkname)
+end
+
+-- Check if HttpGet is available
+if not game.HttpGet then
+    warn("[XanBar] HttpGet not available, some features may not work")
 end
 
 -- Verify game services are available
@@ -31933,12 +31942,19 @@ Join discord for more information!
 
     -- BALL TRAJECTORY
     _G.Predicting = false
-    pcall(function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/Floute-amd/scripts/refs/heads/main/trajectory.lua"))()
-    end)
+    -- Don't load trajectory script immediately, let it load when toggle is enabled
+    local trajectoryLoaded = false
     VTab:AddToggle("Ball Trajectory", {
         Default = false, Flag = "BallTrajectToggleFlag",
-        Callback = function(v) _G.Predicting = v end
+        Callback = function(v)
+            _G.Predicting = v
+            if v and not trajectoryLoaded then
+                pcall(function()
+                    loadstring(game:HttpGet("https://raw.githubusercontent.com/Floute-amd/scripts/refs/heads/main/trajectory.lua"))()
+                    trajectoryLoaded = true
+                end)
+            end
+        end
     })
 
     -- GOAL EFFECT CUSTOMIZATION
