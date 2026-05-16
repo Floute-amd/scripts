@@ -4,19 +4,36 @@ if not getgenv then
     warn("[XanBar] getgenv not found, using _G as fallback")
 end
 
--- Safe loadstring wrapper
-local originalLoadstring = loadstring or load
-loadstring = function(code, chunkname)
-    if not code or code == "" then
-        warn("[XanBar] loadstring received empty code")
-        return nil
+-- Safe script loader function
+local function safeLoadScript(url, scriptName)
+    scriptName = scriptName or "Unknown"
+    local success, result = pcall(function()
+        local code = game:HttpGet(url)
+        if not code or code == "" then
+            warn("[XanBar] Failed to fetch script:", scriptName)
+            return false
+        end
+        local func, err = loadstring(code)
+        if not func then
+            warn("[XanBar] Failed to compile script:", scriptName, err)
+            return false
+        end
+        func()
+        return true
+    end)
+    if not success then
+        warn("[XanBar] Error loading script:", scriptName, result)
     end
-    return originalLoadstring(code, chunkname)
+    return success
 end
+
+-- Make it global so other parts can use it
+_G.safeLoadScript = safeLoadScript
 
 -- Check if HttpGet is available
 if not game.HttpGet then
     warn("[XanBar] HttpGet not available, some features may not work")
+    game.HttpGet = function() return "" end
 end
 
 -- Verify game services are available
@@ -31317,9 +31334,7 @@ Join discord for more information!
     }, function(v)
         if v then
             if not dribbleLoaded then
-                pcall(function()
-                    loadstring(game:HttpGet("https://raw.githubusercontent.com/XZuuyaX/Auto-Dribble/refs/heads/main/Main.lua", true))()
-                end)
+                safeLoadScript("https://raw.githubusercontent.com/XZuuyaX/Auto-Dribble/refs/heads/main/Main.lua", "Auto-Dribble")
                 dribbleLoaded = true
             end
             getgenv().AutoDribbleSettings.Enabled = true
@@ -31525,9 +31540,7 @@ Join discord for more information!
     end)
 
     BallTab:AddButton("Control Ball", function()
-        pcall(function()
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/XZuuyaX/CtrlBall/main/Main"))()
-        end)
+        safeLoadScript("https://raw.githubusercontent.com/XZuuyaX/CtrlBall/main/Main", "Control Ball")
         UI.Success("Control Ball", "Script loaded successfully!")
     end)
 
@@ -31542,9 +31555,7 @@ Join discord for more information!
     end)
 
     BallTab:AddButton("SnakeShoot", function()
-        pcall(function()
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/yz188u/SnkSht/main/main.luau"))()
-        end)
+        safeLoadScript("https://raw.githubusercontent.com/yz188u/SnkSht/main/main.luau", "SnakeShoot")
         UI.Success("SnakeShoot", "Script loaded successfully!")
     end)
 
@@ -31561,9 +31572,7 @@ Join discord for more information!
     MiscTab:AddSection("Run the Auto Goalkeeper | Not 100% Accurate, but still good i think")
 
     MiscTab:AddButton("Auto GK", function()
-        pcall(function()
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/yz188u/agk/main/main.luau", true))()
-        end)
+        safeLoadScript("https://raw.githubusercontent.com/yz188u/agk/main/main.luau", "Auto GK")
         UI.Success("Auto GK", "Script loaded successfully!")
     end)
 
@@ -31600,9 +31609,7 @@ Join discord for more information!
         Default = false, Flag = "NoCooldownToggle"
     }, function(v)
         if not ncdLoaded then
-            pcall(function()
-                loadstring(game:HttpGet("https://raw.githubusercontent.com/Floute-amd/scripts/refs/heads/main/ncd.lua"))()
-            end)
+            safeLoadScript("https://raw.githubusercontent.com/Floute-amd/scripts/refs/heads/main/ncd.lua", "No Cooldown")
             ncdLoaded = true
         end
         if v then
@@ -31949,10 +31956,8 @@ Join discord for more information!
         Callback = function(v)
             _G.Predicting = v
             if v and not trajectoryLoaded then
-                pcall(function()
-                    loadstring(game:HttpGet("https://raw.githubusercontent.com/Floute-amd/scripts/refs/heads/main/trajectory.lua"))()
-                    trajectoryLoaded = true
-                end)
+                safeLoadScript("https://raw.githubusercontent.com/Floute-amd/scripts/refs/heads/main/trajectory.lua", "Ball Trajectory")
+                trajectoryLoaded = true
             end
         end
     })
