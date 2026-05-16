@@ -1,3 +1,21 @@
+-- Safety check for executor functions
+if not getgenv then
+    getgenv = function() return _G end
+    warn("[XanBar] getgenv not found, using _G as fallback")
+end
+if not loadstring then
+    loadstring = function(code)
+        return load(code)
+    end
+    warn("[XanBar] loadstring not found, using load as fallback")
+end
+
+-- Verify game services are available
+local success, Players = pcall(function() return game:GetService("Players") end)
+if not success then
+    error("[XanBar] Failed to get Players service. Are you running this in Roblox?")
+end
+
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
@@ -31290,7 +31308,9 @@ Join discord for more information!
     }, function(v)
         if v then
             if not dribbleLoaded then
-                loadstring(game:HttpGet("https://raw.githubusercontent.com/XZuuyaX/Auto-Dribble/refs/heads/main/Main.lua", true))()
+                pcall(function()
+                    loadstring(game:HttpGet("https://raw.githubusercontent.com/XZuuyaX/Auto-Dribble/refs/heads/main/Main.lua", true))()
+                end)
                 dribbleLoaded = true
             end
             getgenv().AutoDribbleSettings.Enabled = true
@@ -31496,7 +31516,9 @@ Join discord for more information!
     end)
 
     BallTab:AddButton("Control Ball", function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/XZuuyaX/CtrlBall/main/Main"))()
+        pcall(function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/XZuuyaX/CtrlBall/main/Main"))()
+        end)
         UI.Success("Control Ball", "Script loaded successfully!")
     end)
 
@@ -31511,7 +31533,9 @@ Join discord for more information!
     end)
 
     BallTab:AddButton("SnakeShoot", function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/yz188u/SnkSht/main/main.luau"))()
+        pcall(function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/yz188u/SnkSht/main/main.luau"))()
+        end)
         UI.Success("SnakeShoot", "Script loaded successfully!")
     end)
 
@@ -31528,7 +31552,9 @@ Join discord for more information!
     MiscTab:AddSection("Run the Auto Goalkeeper | Not 100% Accurate, but still good i think")
 
     MiscTab:AddButton("Auto GK", function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/yz188u/agk/main/main.luau", true))()
+        pcall(function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/yz188u/agk/main/main.luau", true))()
+        end)
         UI.Success("Auto GK", "Script loaded successfully!")
     end)
 
@@ -31565,7 +31591,9 @@ Join discord for more information!
         Default = false, Flag = "NoCooldownToggle"
     }, function(v)
         if not ncdLoaded then
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/Floute-amd/scripts/refs/heads/main/ncd.lua"))()
+            pcall(function()
+                loadstring(game:HttpGet("https://raw.githubusercontent.com/Floute-amd/scripts/refs/heads/main/ncd.lua"))()
+            end)
             ncdLoaded = true
         end
         if v then
@@ -31905,7 +31933,9 @@ Join discord for more information!
 
     -- BALL TRAJECTORY
     _G.Predicting = false
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/Floute-amd/scripts/refs/heads/main/trajectory.lua"))()
+    pcall(function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Floute-amd/scripts/refs/heads/main/trajectory.lua"))()
+    end)
     VTab:AddToggle("Ball Trajectory", {
         Default = false, Flag = "BallTrajectToggleFlag",
         Callback = function(v) _G.Predicting = v end
