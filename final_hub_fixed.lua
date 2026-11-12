@@ -31488,13 +31488,14 @@ Join discord for more information!
     local fbHitbox       = nil
     local rgbOn          = false
     local hitboxSz       = 2.5
-    local hitboxInterval = 1
+    local hitboxInterval = 0.2
     local ballVisible    = true
 
     local function findHitbox()
         if fbHitbox and fbHitbox.Parent and fbHitbox:IsDescendantOf(game.Workspace) then
             return fbHitbox
         end
+        fbHitbox = nil
         for _, obj in pairs(game.Workspace:GetDescendants()) do
             if obj:IsA("Part") and obj.Name == "Hitbox" and obj.Parent and obj.Parent.Name == "Football" then
                 fbHitbox = obj; return fbHitbox
@@ -31590,7 +31591,12 @@ Join discord for more information!
     task.spawn(function()
         while true do
             task.wait(hitboxInterval)
-            if not (fbHitbox and fbHitbox.Parent) then updateHitbox() end
+            -- Re-apply unconditionally. The server replicates Size back to the
+            -- ball's real value on reset, respawn and pickup, and the cached
+            -- part stays parented through all of it, so a "is it still there?"
+            -- guard here leaves the hitbox at default size until the slider
+            -- is touched again.
+            updateHitbox()
         end
     end)
 
