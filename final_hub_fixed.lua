@@ -4732,6 +4732,7 @@ function Xan:CreateWindow(config)
     config = config or {}
     
     local requestedLayout = config.Layout or "Auto"
+    do -- [scope] free registers: locals below are dead by the matching end
     local forceDesktop = config.ForceDesktop == true
     
     if requestedLayout == "Auto" or requestedLayout == nil then
@@ -4830,6 +4831,7 @@ function Xan:CreateWindow(config)
         return mobileWrapper
     end
     
+    end -- [scope]
     local layoutInfo = LayoutRegistry[requestedLayout] or LayoutRegistry.Default
     config.Layout = layoutInfo.Name
     
@@ -4846,15 +4848,25 @@ function Xan:CreateWindow(config)
     else
         theme = self.CurrentTheme
     end
+    do -- [scope] free registers: locals below are dead by the matching end
     local minSize = config.MinSize or Vector2.new(400, 300)
+    end -- [scope]
+    do -- [scope] free registers: locals below are dead by the matching end
     local saveConfig = config.SaveConfig ~= false
+    end -- [scope]
+    do -- [scope] free registers: locals below are dead by the matching end
     local configName = config.ConfigName or title:gsub("%s+", "_"):lower()
+    end -- [scope]
     local showUserInfo = config.ShowUserInfo ~= false
     local userAvatar = config.UserAvatar
     local userName = config.UserName or LocalPlayer.DisplayName
+    do -- [scope] free registers: locals below are dead by the matching end
     local userSubtitle = config.UserSubtitle or "@" .. LocalPlayer.Name
+    end -- [scope]
     local logoImage = config.Logo or Logos.Default
+    do -- [scope] free registers: locals below are dead by the matching end
     local showLogo = config.ShowLogo ~= false
+    end -- [scope]
     local showSplash = config.ShowSplash
     if showSplash == nil then
         showSplash = IsMobile
@@ -4907,10 +4919,14 @@ function Xan:CreateWindow(config)
     local dragBar = guiObjects.DragBar
     local dragBarContainer = dragBar.Container
     local dragBarCosmetic = dragBar.Cosmetic
+    do -- [scope] free registers: locals below are dead by the matching end
     local dragBarOffset = dragBar.Offset
+    end -- [scope]
     local size = guiObjects.Size
+    do -- [scope] free registers: locals below are dead by the matching end
     local position = guiObjects.Position
     
+    end -- [scope]
     local sidebar = guiObjects.Sidebar
     local sidebarDepthBar = guiObjects.SidebarDepthBar
     local sidebarWidth = guiObjects.SidebarWidth or 0
@@ -4927,7 +4943,9 @@ function Xan:CreateWindow(config)
     local brandDivider = guiObjects.BrandDivider
     
     local contentFrame = guiObjects.ContentFrame
+    do -- [scope] free registers: locals below are dead by the matching end
     local contentCover = guiObjects.ContentCover
+    end -- [scope]
     local topbar = guiObjects.Topbar
     local tabTitle = guiObjects.TabTitle
     local controlsFrame = guiObjects.ControlsFrame
@@ -4936,11 +4954,13 @@ function Xan:CreateWindow(config)
     local btnPadding = IsMobile and 10 or 8
     local controlsWidth = (iconBtnSize * 3) + (btnPadding * 2) + 12
     
+    do -- [scope] free registers: locals below are dead by the matching end
     local topbarHeight = guiObjects.TopbarHeight or 0
     local tabListHeight = guiObjects.TabListHeight or 0
     local tabListSpacing = hasSidebar and 0 or 8
     local topBarHeight = topbarHeight + tabListSpacing + tabListHeight + (hasSidebar and 0 or 8)
     
+    end -- [scope]
     local doClose
     local doMinimize
     local doMaximize
@@ -4996,6 +5016,7 @@ function Xan:CreateWindow(config)
         end)
     end
     
+    do -- [scope] free registers: locals below are dead by the matching end
     local userFrame
     if showUserInfo and hasSidebar and sidebar then
         userFrame = Util.Create("Frame", {
@@ -6345,6 +6366,7 @@ function Xan:CreateWindow(config)
         end
     end
     
+    end -- [scope]
     local sidebarControlsParent = hasSidebar and controlsFrame or nil
     
     local topbarSettingsBtn = Util.Create("ImageButton", {
@@ -6508,6 +6530,7 @@ function Xan:CreateWindow(config)
         Util.Create("UICorner", { CornerRadius = UDim.new(0, 12) })
     })
     
+    do -- [scope] free registers: locals below are dead by the matching end
     local searchTopRightCover = Util.Create("Frame", {
         Name = "TopRightCover",
         BackgroundColor3 = Xan.CurrentTheme.Background,
@@ -6519,6 +6542,8 @@ function Xan:CreateWindow(config)
         Parent = mainFrame
     })
     
+    end -- [scope]
+    do -- [scope] free registers: locals below are dead by the matching end
     local searchBottomRightCover = Util.Create("Frame", {
         Name = "BottomRightCover",
         BackgroundColor3 = Xan.CurrentTheme.Background,
@@ -6530,6 +6555,7 @@ function Xan:CreateWindow(config)
         Parent = mainFrame
     })
     
+    end -- [scope]
     local searchTopbar = Util.Create("Frame", {
         Name = "SearchTopbar",
         BackgroundTransparency = 1,
@@ -6538,6 +6564,7 @@ function Xan:CreateWindow(config)
         Parent = searchOverlay
     })
     
+    do -- [scope] free registers: locals below are dead by the matching end
     local searchTopbarDivider = Util.Create("Frame", {
         Name = "Divider",
         BackgroundColor3 = Xan.CurrentTheme.Divider,
@@ -6547,6 +6574,7 @@ function Xan:CreateWindow(config)
         Parent = searchTopbar
     })
     
+    end -- [scope]
     local searchInputContainer = Util.Create("Frame", {
         Name = "SearchInputContainer",
         BackgroundColor3 = Xan.CurrentTheme.Card,
@@ -6899,6 +6927,7 @@ function Xan:CreateWindow(config)
         Parent = searchContent
     })
     
+    do -- [scope] free registers: locals below are dead by the matching end
     local noResultsIcon = Util.Create("ImageLabel", {
         Name = "Icon",
         BackgroundTransparency = 1,
@@ -6912,6 +6941,8 @@ function Xan:CreateWindow(config)
         Parent = searchNoResults
     })
     
+    end -- [scope]
+    do -- [scope] free registers: locals below are dead by the matching end
     local noResultsText = Util.Create("TextLabel", {
         Name = "Text",
         BackgroundTransparency = 1,
@@ -6926,6 +6957,8 @@ function Xan:CreateWindow(config)
         Parent = searchNoResults
     })
     
+    end -- [scope]
+    do -- [scope] free registers: locals below are dead by the matching end
     local noResultsHint = Util.Create("TextLabel", {
         Name = "Hint",
         BackgroundTransparency = 1,
@@ -6941,6 +6974,7 @@ function Xan:CreateWindow(config)
         Parent = searchNoResults
     })
     
+    end -- [scope]
     local searchOpen = false
     local searchElements = {}
     local searchGames = {}
@@ -7748,6 +7782,7 @@ function Xan:CreateWindow(config)
         Util.Create("UICorner", { CornerRadius = UDim.new(0, 8) })
     })
     
+    do -- [scope] free registers: locals below are dead by the matching end
     local settingsBlurGradient = Util.Create("UIGradient", {
         Color = ColorSequence.new({
             ColorSequenceKeypoint.new(0, Color3.fromRGB(15, 15, 20)),
@@ -7758,6 +7793,7 @@ function Xan:CreateWindow(config)
         Parent = settingsBlurOverlay
     })
     
+    end -- [scope]
     local settingsContentBlocker = Util.Create("TextButton", {
         Name = "SettingsContentBlocker",
         BackgroundTransparency = 1,
@@ -7775,6 +7811,7 @@ function Xan:CreateWindow(config)
     settingsContentBlocker.MouseMoved:Connect(function()
     end)
     
+    do -- [scope] free registers: locals below are dead by the matching end
     local settingsPanelInputBlocker = Util.Create("TextButton", {
         Name = "InputBlocker",
         BackgroundTransparency = 1,
@@ -7786,6 +7823,7 @@ function Xan:CreateWindow(config)
         Parent = settingsPanel
     })
     
+    end -- [scope]
     local settingsPanelCoverL = Util.Create("Frame", {
         Name = "CoverL",
         BackgroundColor3 = Xan.CurrentTheme.Background,
@@ -7804,6 +7842,7 @@ function Xan:CreateWindow(config)
         Parent = settingsPanel
     })
     
+    do -- [scope] free registers: locals below are dead by the matching end
     local settingsTitle = Util.Create("TextLabel", {
         Name = "Title",
         BackgroundTransparency = 1,
@@ -7818,6 +7857,7 @@ function Xan:CreateWindow(config)
         Parent = settingsHeader
     })
     
+    end -- [scope]
     local settingsCloseBtnSize = IsMobile and 36 or 18
     local settingsCloseBtn = Util.Create("ImageButton", {
         Name = "Close",
@@ -7840,6 +7880,7 @@ function Xan:CreateWindow(config)
         Util.Tween(settingsCloseBtn, 0.15, { ImageColor3 = Xan.CurrentTheme.TextDim, ImageTransparency = 0.3 })
     end)
     
+    do -- [scope] free registers: locals below are dead by the matching end
     local settingsHeaderDivider = Util.Create("Frame", {
         Name = "Divider",
         BackgroundColor3 = Xan.CurrentTheme.Divider,
@@ -7849,6 +7890,7 @@ function Xan:CreateWindow(config)
         Parent = settingsHeader
     })
     
+    end -- [scope]
     local settingsScroll = Util.Create("ScrollingFrame", {
         Name = "Content",
         BackgroundTransparency = 1,
@@ -8213,6 +8255,7 @@ function Xan:CreateWindow(config)
     end
     
     local themeButtons = {}
+    do -- [scope] free registers: locals below are dead by the matching end
     local selectedTheme = Xan.SavedThemeName or Xan.CurrentTheme.Name or "Default"
     local openThemeEditor
     
@@ -10434,8 +10477,10 @@ function Xan:CreateWindow(config)
     
     addThemeBtn.MouseButton1Click:Connect(openThemeEditor)
     
+    end -- [scope]
     createSettingsSection("Active List", 7)
     
+    do -- [scope] free registers: locals below are dead by the matching end
     local activeListFrame = Util.Create("Frame", {
         Name = "ActiveListToggle",
         BackgroundColor3 = Xan.CurrentTheme.Card,
@@ -10520,6 +10565,7 @@ function Xan:CreateWindow(config)
         Util.Tween(activeListFrame, 0.15, { BackgroundColor3 = Xan.CurrentTheme.Card })
     end)
     
+    end -- [scope]
     if not IsMobile then
         createSettingsSection("Controls", 10)
         
@@ -10599,6 +10645,7 @@ function Xan:CreateWindow(config)
     
     createSettingsSection("Actions", 20)
     
+    do -- [scope] free registers: locals below are dead by the matching end
     local unloadBtn = Util.Create("Frame", {
         Name = "UnloadButton",
         BackgroundTransparency = 1,
@@ -10669,6 +10716,7 @@ function Xan:CreateWindow(config)
         end)
     end)
     
+    end -- [scope]
     local function disableContentInteraction()
         for _, desc in ipairs(contentContainer:GetDescendants()) do
             if desc:IsA("GuiButton") then
@@ -10771,6 +10819,7 @@ function Xan:CreateWindow(config)
         })
     end
     
+    do -- [scope] free registers: locals below are dead by the matching end
     local function registerSearchGame(gameName, thumbnail, callback)
         table.insert(searchGames, {
             Name = gameName,
@@ -11917,6 +11966,7 @@ function Xan:CreateWindow(config)
         end
     end
     
+    end -- [scope]
     function window:Unload()
         Xan:UnloadAll()
     end
@@ -20298,6 +20348,7 @@ function Xan:CreateWindow(config)
         return tab
     end
     
+    do -- [scope] free registers: locals below are dead by the matching end
     local toggleConn = UserInputService.InputBegan:Connect(function(input, processed)
         if processed then return end
         if input.KeyCode == Xan.ToggleKey then
@@ -20308,6 +20359,7 @@ function Xan:CreateWindow(config)
     end)
     table.insert(Xan.Connections, toggleConn)
     
+    end -- [scope]
     window.AddTab = function(_, nameOrConfig, icon)
         local cfg = {}
         if type(nameOrConfig) == "string" then
@@ -20338,6 +20390,7 @@ function Xan:CreateWindow(config)
     
     table.insert(self.Windows, window)
     
+    do -- [scope] free registers: locals below are dead by the matching end
     local function applyThemeIfNeeded()
         if self.SavedThemeName and self.Themes[self.SavedThemeName] then
             self:ApplyTheme(self.SavedThemeName)
@@ -20350,6 +20403,7 @@ function Xan:CreateWindow(config)
     task.delay(0.8, applyThemeIfNeeded)
     task.delay(1.5, applyThemeIfNeeded)
     
+    end -- [scope]
     task.delay(0.7, function()
         if showActiveList and Xan.ActiveBindsVisible then
             Xan:ShowBindList()
