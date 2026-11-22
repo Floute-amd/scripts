@@ -30969,18 +30969,9 @@ end
 
 function CreateMainWindow()
 
-UI.Sideloader({
-    Steps = {
-        "Checking executor...",
-        "Leaking eu ranking...",
-        "Initializing flag rulebook nuke...",
-        "Fetching bew leaks...",
-        "Bypassing Eu IP ban...",
-        "Bypass Successfully 8 alt in eu btw!",
-        "Script Loaded ty to ryokin for helping me!"
-    },
-    StepDelay  = 0.1,
-    OnComplete = function()
+-- Sideloader bypassed; call OnComplete directly to avoid stuck loading
+;(function()
+    local _OnComplete = function()
 
     local Win = UI.New({
         Title          = "Floute's HUB",
@@ -32309,7 +32300,8 @@ Join discord for more information!
     SettingsTab:CreateUnloadButton({ Name = "Destroy UI" })
 
     end
-})
+    _OnComplete()
+end)()
 end
 
 -- Auto-start the hub
