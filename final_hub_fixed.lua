@@ -1,22 +1,5 @@
 print("[XanBar] Script starting...")
 
--- [XanBar] force every ScreenGui on top so game HUD doesn't steal clicks
-do
-    local _newInst = Instance.new
-    Instance.new = function(class, ...)
-        local inst = _newInst(class, ...)
-        if class == "ScreenGui" then
-            pcall(function()
-                inst.DisplayOrder = 999999
-                inst.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-                inst.ResetOnSpawn = false
-                inst.IgnoreGuiInset = true
-            end)
-        end
-        return inst
-    end
-end
-
 -- [XanBar DEBUG] catch unhandled async errors and print real stack
 pcall(function() setreadonly(task, false) end)
 do
@@ -32359,15 +32342,19 @@ if not success then
     warn("[XanBar] Stack trace:", debug.traceback())
 end
 
--- Force every XanBar ScreenGui into CoreGui on top of the game HUD so clicks land.
+-- Hoist only XanBar's own ScreenGuis to CoreGui; disable game blockers like CCBlindOverlay.
 warn("[XanBar] hoist start")
 pcall(function()
     local CoreGui = game:GetService("CoreGui")
     local PlayerGui = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui", 5)
-    local function hoist(container)
+    local function isXanBarOwn(name)
+        name = name or ""
+        return name:match("^XanBar") or name:match("^Floute") or name:match("HUB$")
+    end
+    local function hoistOwn(container)
         if not container then return end
         for _, child in pairs(container:GetChildren()) do
-            if child:IsA("ScreenGui") then
+            if child:IsA("ScreenGui") and isXanBarOwn(child.Name) then
                 pcall(function()
                     child.DisplayOrder = 2147483647
                     child.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
@@ -32379,10 +32366,26 @@ pcall(function()
             end
         end
     end
-    hoist(PlayerGui)
-    hoist(CoreGui)
+    hoistOwn(PlayerGui)
+    hoistOwn(CoreGui)
+    -- Disable click-eater overlays from the host game.
+    local blockers = {"CCBlindOverlay", "BlindOverlay", "ClickBlocker", "InputBlocker", "ModalOverlay"}
+    for _, container in pairs({PlayerGui, CoreGui}) do
+        if container then
+            for _, child in pairs(container:GetChildren()) do
+                if child:IsA("ScreenGui") then
+                    for _, name in ipairs(blockers) do
+                        if child.Name == name then
+                            pcall(function() child.Enabled = false end)
+                            warn("[XanBar] disabled blocker ScreenGui: " .. child.Name)
+                        end
+                    end
+                end
+            end
+        end
+    end
     for _, screen in pairs(CoreGui:GetChildren()) do
-        if screen:IsA("ScreenGui") then
+        if screen:IsA("ScreenGui") and isXanBarOwn(screen.Name) then
             for _, descendant in pairs(screen:GetDescendants()) do
                 if descendant:IsA("Frame") or descendant:IsA("ScrollingFrame") then
                     pcall(function() descendant.Active = true end)
