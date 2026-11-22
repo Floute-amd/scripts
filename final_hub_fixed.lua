@@ -21916,33 +21916,45 @@ function Xan:CreateSideloader(config)
         return lineFrame
     end
     
+    local completed = false
+    local function finish()
+        if completed then return end
+        completed = true
+        for _, line in ipairs(logLines) do
+            pcall(function() Util.Tween(line, 0.2, { Position = UDim2.new(-1, 0, 0, 0) }) end)
+        end
+        pcall(function() Util.Tween(overlay, 0.4, { BackgroundTransparency = 1 }) end)
+        task.delay(0.5, function()
+            pcall(function() screenGui:Destroy() end)
+            local ok, err = pcall(onComplete)
+            if not ok then warn("[XanBar] Sideloader OnComplete error:", err) end
+        end)
+    end
+
     local function runSteps()
         for i, step in ipairs(steps) do
             if isComplete then break end
-            
             local isLast = i == #steps
-            addLogLine(step, isLast)
-            onStep(i, step)
-            
+            local ok, err = pcall(addLogLine, step, isLast)
+            if not ok then warn("[XanBar] Sideloader step error:", err) end
+            pcall(onStep, i, step)
             if not isLast then
                 task.wait(stepDelay + math.random() * 0.2)
             end
         end
-        
         task.wait(0.5)
-        
-        for _, line in ipairs(logLines) do
-            Util.Tween(line, 0.2, { Position = UDim2.new(-1, 0, 0, 0) })
-        end
-        
-        Util.Tween(overlay, 0.4, { BackgroundTransparency = 1 })
-        
-        task.delay(0.5, function()
-            screenGui:Destroy()
-            onComplete()
-        end)
+        finish()
     end
-    
+
+    -- Watchdog: force completion if runSteps hangs (prevents stuck sideloader)
+    local maxTime = (#steps * (stepDelay + 0.3)) + 3
+    task.delay(maxTime, function()
+        if not completed then
+            warn("[XanBar] Sideloader watchdog triggered; forcing completion")
+            finish()
+        end
+    end)
+
     local sideloader = {
         ScreenGui = screenGui,
         AddStep = function(text, isSuccess)
@@ -21950,14 +21962,7 @@ function Xan:CreateSideloader(config)
         end,
         Close = function()
             isComplete = true
-            for _, line in ipairs(logLines) do
-                Util.Tween(line, 0.2, { Position = UDim2.new(-1, 0, 0, 0) })
-            end
-            Util.Tween(overlay, 0.4, { BackgroundTransparency = 1 })
-            task.delay(0.5, function()
-                screenGui:Destroy()
-                onComplete()
-            end)
+            finish()
         end
     }
     
