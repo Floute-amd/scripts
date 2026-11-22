@@ -14,7 +14,7 @@ print("[XanBar] getgenv initialized")
 local function safeLoadScript(url, scriptName)
     scriptName = scriptName or "Unknown"
     local success, result = pcall(function()
-        local code = game:HttpGet(url)
+        local code = httpGet(url)
         if not code or code == "" then
             warn("[XanBar] Failed to fetch script:", scriptName)
             return false
@@ -36,11 +36,19 @@ end
 -- Make it global so other parts can use it
 _G.safeLoadScript = safeLoadScript
 
--- Check if HttpGet is available
-if not game.HttpGet then
-    warn("[XanBar] HttpGet not available, some features may not work")
-    game.HttpGet = function() return "" end
+-- httpGet shim: game:HttpGet throws in some games (e.g. "Ugc"); fall back to executor http
+local _execReq = (syn and syn.request) or (http and http.request) or http_request or request
+local function httpGet(url)
+    local ok, body = pcall(function() return game:HttpGet(url) end)
+    if ok and body then return body end
+    if _execReq then
+        local ok2, res = pcall(_execReq, {Url = url, Method = "GET"})
+        if ok2 and res then return res.Body or res.body or "" end
+    end
+    warn("[XanBar] httpGet failed for", url)
+    return ""
 end
+_G.httpGet = httpGet
 
 -- Verify game services are available
 local success, Players = pcall(function() return game:GetService("Players") end)
@@ -1937,7 +1945,7 @@ function CrosshairEngine.Render()
                     if getsynasset then
                         local path = "crosshair_" .. assetId .. ".png"
                         if not isfile(path) then
-                            local imageData = game:HttpGet("https://rbxassetdelivery.com/v1/assetId/" .. assetId)
+                            local imageData = httpGet("https://rbxassetdelivery.com/v1/assetId/" .. assetId)
                             if imageData and #imageData > 100 then
                                 writefile(path, imageData)
                             end
@@ -1947,14 +1955,14 @@ function CrosshairEngine.Render()
                         end
                     else
                         local cdnUrl = "https://tr.rbxcdn.com/" .. assetId
-                        CrosshairEngine.CachedImageData = game:HttpGet(cdnUrl)
+                        CrosshairEngine.CachedImageData = httpGet(cdnUrl)
                     end
                 end)
                 
                 if not CrosshairEngine.CachedImageData then
                     pcall(function()
                         local url = "https://assetgame.roblox.com/asset/?id=" .. assetId
-                        CrosshairEngine.CachedImageData = game:HttpGet(url)
+                        CrosshairEngine.CachedImageData = httpGet(url)
                     end)
                 end
             end
@@ -28938,7 +28946,7 @@ function Xan.LoadPlugin(pluginName)
     
     local url = Xan.PluginStore .. pluginName .. ".lua"
     local success, result = pcall(function()
-        return loadstring(game:HttpGet(url))()
+        return loadstring(httpGet(url))()
     end)
     
     if success and result then
@@ -28960,7 +28968,7 @@ end
 
 function Xan.LoadPluginFromURL(url)
     local success, result = pcall(function()
-        return loadstring(game:HttpGet(url))()
+        return loadstring(httpGet(url))()
     end)
     
     if success and result then
@@ -30696,7 +30704,7 @@ function Xan:CreateOnboarding(config)
                         local layoutData = layouts[selectedLayout]
                         if layoutData and layoutData.Script then
                             pcall(function()
-                                loadstring(game:HttpGet(layoutData.Script))()
+                                loadstring(httpGet(layoutData.Script))()
                             end)
                         end
                         
@@ -30721,7 +30729,7 @@ function Xan:CreateOnboarding(config)
                             if not musicExists then
                                 task.delay(0.5, function()
                                     pcall(function()
-                                        loadstring(game:HttpGet("https://xan.bar/plugins/music_player.lua"))()
+                                        loadstring(httpGet("https://xan.bar/plugins/music_player.lua"))()
                                     end)
                                 end)
                             end
@@ -30745,7 +30753,7 @@ function Xan:CreateOnboarding(config)
             local layoutData = layouts[selectedLayout]
             if layoutData and layoutData.Script then
                 local success1, err1 = pcall(function()
-                    loadstring(game:HttpGet(layoutData.Script))()
+                    loadstring(httpGet(layoutData.Script))()
                 end)
                 if not success1 then
                     warn("Failed to load script:", err1)
@@ -30755,7 +30763,7 @@ function Xan:CreateOnboarding(config)
             if musicPlayerEnabled then
                 task.delay(1, function()
                     local success2, err2 = pcall(function()
-                        loadstring(game:HttpGet(musicPlayerUrl))()
+                        loadstring(httpGet(musicPlayerUrl))()
                     end)
                     if not success2 then
                         warn("Failed to load music player:", err2)
@@ -32211,7 +32219,7 @@ Join discord for more information!
         local results = {}
         repeat
             local ok2, res = pcall(function()
-                return game:HttpGet(string.format(
+                return httpGet(string.format(
                     "https://games.roblox.com/v1/games/%d/servers/Public?sortOrder=%s&limit=100&cursor=%s",
                     placeId, sortOrder, cursor
                 ))
