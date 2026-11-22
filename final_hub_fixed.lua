@@ -32392,3 +32392,24 @@ pcall(function()
     end
 end)
 warn("[XanBar] hoist done")
+
+-- Diagnostic: enumerate every ScreenGui + top-level TextButton and the input modifiers.
+pcall(function()
+    local UIS = game:GetService("UserInputService")
+    warn("[XanBar DIAG] UIS.ModalEnabled=" .. tostring(UIS.ModalEnabled) .. " MouseEnabled=" .. tostring(UIS.MouseEnabled))
+    for _, g in pairs(game:GetService("CoreGui"):GetChildren()) do
+        if g:IsA("ScreenGui") then
+            warn(string.format("[XanBar DIAG] CoreGui.%s Enabled=%s DisplayOrder=%d ResetOnSpawn=%s",
+                g.Name, tostring(g.Enabled), g.DisplayOrder, tostring(g.ResetOnSpawn)))
+        end
+    end
+    local pgui = game:GetService("Players").LocalPlayer:FindFirstChildOfClass("PlayerGui")
+    if pgui then
+        for _, g in pairs(pgui:GetChildren()) do
+            if g:IsA("ScreenGui") then
+                warn(string.format("[XanBar DIAG] PlayerGui.%s Enabled=%s DisplayOrder=%d",
+                    g.Name, tostring(g.Enabled), g.DisplayOrder))
+            end
+        end
+    end
+end)
