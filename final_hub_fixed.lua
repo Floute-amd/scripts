@@ -1,4 +1,35 @@
 print("[XanBar] Script starting...")
+
+-- [XanBar DEBUG] catch unhandled async errors and print real stack
+pcall(function() setreadonly(task, false) end)
+do
+    local _spawn, _defer, _delay = task.spawn, task.defer, task.delay
+    local function wrap(name, orig)
+        return function(fn, ...)
+            if type(fn) ~= "function" then return orig(fn, ...) end
+            local args = {...}
+            return orig(function()
+                local ok, err = xpcall(function() return fn(table.unpack(args)) end, debug.traceback)
+                if not ok then
+                    warn("[XanBar DEBUG] unhandled error in task." .. name .. ": " .. tostring(err))
+                end
+            end)
+        end
+    end
+    task.spawn = wrap("spawn", _spawn)
+    task.defer = wrap("defer", _defer)
+    task.delay = function(d, fn, ...)
+        if type(fn) ~= "function" then return _delay(d, fn, ...) end
+        local args = {...}
+        return _delay(d, function()
+            local ok, err = xpcall(function() return fn(table.unpack(args)) end, debug.traceback)
+            if not ok then
+                warn("[XanBar DEBUG] unhandled error in task.delay: " .. tostring(err))
+            end
+        end)
+    end
+end
+
 local getgenv = getgenv
 if not getgenv then
     local fallback = function() return _G end
@@ -30970,7 +31001,7 @@ end
 function CreateMainWindow()
 
 -- Sideloader bypassed; call OnComplete directly to avoid stuck loading
-;(function()
+(function()
     local _OnComplete = function()
 
     local Win = UI.New({
