@@ -32358,3 +32358,36 @@ if not success then
     warn("[XanBar] Failed to create main window:", err)
     warn("[XanBar] Stack trace:", debug.traceback())
 end
+
+-- Force every XanBar ScreenGui into CoreGui on top of the game HUD so clicks land.
+task.spawn(function()
+    task.wait(0.5)
+    local CoreGui = game:GetService("CoreGui")
+    local PlayerGui = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+    local function hoist(container)
+        for _, child in pairs(container:GetChildren()) do
+            if child:IsA("ScreenGui") then
+                pcall(function()
+                    child.DisplayOrder = 2147483647
+                    child.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+                    child.ResetOnSpawn = false
+                    if child.Parent ~= CoreGui then
+                        child.Parent = CoreGui
+                    end
+                end)
+            end
+        end
+    end
+    hoist(PlayerGui)
+    hoist(CoreGui)
+    for _, screen in pairs(CoreGui:GetChildren()) do
+        if screen:IsA("ScreenGui") then
+            for _, descendant in pairs(screen:GetDescendants()) do
+                if descendant:IsA("Frame") or descendant:IsA("ScrollingFrame") then
+                    pcall(function() descendant.Active = true end)
+                end
+            end
+        end
+    end
+    warn("[XanBar] hoisted ScreenGuis to CoreGui, DisplayOrder maxed, frames set Active")
+end)
