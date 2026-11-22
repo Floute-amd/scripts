@@ -1,5 +1,22 @@
 print("[XanBar] Script starting...")
 
+-- [XanBar] force every ScreenGui on top so game HUD doesn't steal clicks
+do
+    local _newInst = Instance.new
+    Instance.new = function(class, ...)
+        local inst = _newInst(class, ...)
+        if class == "ScreenGui" then
+            pcall(function()
+                inst.DisplayOrder = 999999
+                inst.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+                inst.ResetOnSpawn = false
+                inst.IgnoreGuiInset = true
+            end)
+        end
+        return inst
+    end
+end
+
 -- [XanBar DEBUG] catch unhandled async errors and print real stack
 pcall(function() setreadonly(task, false) end)
 do
