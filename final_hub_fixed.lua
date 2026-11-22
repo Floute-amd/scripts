@@ -32360,11 +32360,12 @@ if not success then
 end
 
 -- Force every XanBar ScreenGui into CoreGui on top of the game HUD so clicks land.
-task.spawn(function()
-    task.wait(0.5)
+warn("[XanBar] hoist start")
+pcall(function()
     local CoreGui = game:GetService("CoreGui")
-    local PlayerGui = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+    local PlayerGui = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui", 5)
     local function hoist(container)
+        if not container then return end
         for _, child in pairs(container:GetChildren()) do
             if child:IsA("ScreenGui") then
                 pcall(function()
@@ -32389,5 +32390,5 @@ task.spawn(function()
             end
         end
     end
-    warn("[XanBar] hoisted ScreenGuis to CoreGui, DisplayOrder maxed, frames set Active")
 end)
+warn("[XanBar] hoist done")
