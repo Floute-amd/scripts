@@ -32306,14 +32306,9 @@ end)()
 end
 
 -- Auto-start the hub
-local success, err = pcall(CreateMainWindow)
-if not success then
-    warn("[XanBar] Failed to create main window:", err)
-    warn("[XanBar] Stack trace:", debug.traceback())
-end
+pcall(CreateMainWindow)
 
 -- Hoist only XanBar's own ScreenGuis to CoreGui; disable game blockers like CCBlindOverlay.
-warn("[XanBar] hoist start")
 pcall(function()
     local CoreGui = game:GetService("CoreGui")
     local PlayerGui = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui", 5)
@@ -32338,7 +32333,6 @@ pcall(function()
     end
     hoistOwn(PlayerGui)
     hoistOwn(CoreGui)
-    -- Disable click-eater overlays from the host game.
     local blockers = {"CCBlindOverlay", "BlindOverlay", "ClickBlocker", "InputBlocker", "ModalOverlay"}
     for _, container in pairs({PlayerGui, CoreGui}) do
         if container then
@@ -32347,7 +32341,6 @@ pcall(function()
                     for _, name in ipairs(blockers) do
                         if child.Name == name then
                             pcall(function() child.Enabled = false end)
-                            warn("[XanBar] disabled blocker ScreenGui: " .. child.Name)
                         end
                     end
                 end
@@ -32364,27 +32357,3 @@ pcall(function()
         end
     end
 end)
-warn("[XanBar] hoist done")
-
--- Diagnostic: enumerate every ScreenGui + top-level TextButton and the input modifiers.
-pcall(function()
-    local UIS = game:GetService("UserInputService")
-    warn("[XanBar DIAG] UIS.ModalEnabled=" .. tostring(UIS.ModalEnabled) .. " MouseEnabled=" .. tostring(UIS.MouseEnabled))
-    for _, g in pairs(game:GetService("CoreGui"):GetChildren()) do
-        if g:IsA("ScreenGui") then
-            warn(string.format("[XanBar DIAG] CoreGui.%s Enabled=%s DisplayOrder=%d ResetOnSpawn=%s",
-                g.Name, tostring(g.Enabled), g.DisplayOrder, tostring(g.ResetOnSpawn)))
-        end
-    end
-    local pgui = game:GetService("Players").LocalPlayer:FindFirstChildOfClass("PlayerGui")
-    if pgui then
-        for _, g in pairs(pgui:GetChildren()) do
-            if g:IsA("ScreenGui") then
-                warn(string.format("[XanBar DIAG] PlayerGui.%s Enabled=%s DisplayOrder=%d",
-                    g.Name, tostring(g.Enabled), g.DisplayOrder))
-            end
-        end
-    end
-end)
-
--- bump 1795379542
